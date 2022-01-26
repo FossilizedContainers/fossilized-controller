@@ -1,5 +1,6 @@
 import click
 import docker
+import requests
 
 
 # creating a group of commands that can be run
@@ -71,9 +72,14 @@ def clean():
 
 #
 # the client to connect to containers
-#
+# code contained is copied from the Flaks-HTTP-server-client repo
 def client():
-    pass
+     # creating a dictionary to send the LiPD file to the server
+    files = {"pond": open("3MPond.Pellatt.2000.lpd", 'rb')}
+    # creating a variable that will recieve the netCDF file from the response message and sending the file(s) to the client
+    netCDF = requests.post('http://127.0.0.1:23657/', files=files)
+    # printing the file that the client recieved back from the srever in the response message
+    print(netCDF.content)
 
 # main to initiate variables and group
 def main():
