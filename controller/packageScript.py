@@ -21,6 +21,9 @@ def create():
     print("\nCreating new container...")
 
 
+#
+# there will be more here soon
+#
 @cli.command()
 def run():
     # Build the image
@@ -33,9 +36,30 @@ def run():
     cont = client.containers.run("tech-demo", detach=True)
     print(cont.logs().decode("utf-8"))
 
+#
+# there will be more here soon
+#
+@cli.command()
+def display():
+    pass
 
-# command mostly for testing
-# will stop all containers and prune them
+#
+# there will be more here soon
+#
+@cli.command()
+def help():
+    pass
+
+#
+# there will be more here soon
+#
+@cli.command()
+def upload():
+    pass
+
+#
+# there will be more here soon
+#
 @cli.command()
 def clean():
     print("Stopping all containers...\n")
@@ -45,6 +69,11 @@ def clean():
     print("Deleting all containers...\n")
     client.containers.prune()
 
+#
+# the client to connect to containers
+#
+def client():
+    pass
 
 # main to initiate variables and group
 def main():
