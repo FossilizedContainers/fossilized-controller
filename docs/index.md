@@ -2,7 +2,7 @@
 title: "Fossilized Controller"
 keywords: quickstart
 tags: [getting_started]
-sidebar: mydoc_sidebar
+sidebar: index_sidebar
 permalink: index.html
 summary: We are creating a tool to help scientists containerize their code.
 ---
