@@ -100,6 +100,7 @@ defaults:
 
 sidebars:
 - home_sidebar
+- index_sidebar
 - mydoc_sidebar
 - product1_sidebar
 - other
