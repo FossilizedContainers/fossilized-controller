@@ -102,7 +102,6 @@ sidebars:
 - home_sidebar
 - mydoc_sidebar
 - product1_sidebar
-- product2_sidebar
 - other
 
 description: "Documentation for the Fossilized Controller"
