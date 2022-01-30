@@ -54,12 +54,15 @@ def stop():
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
 @cli.command()
-@cli.prompt("Please type the name of the container you would like to clear from the cache: ")
-def clean(container):
-    # will use container manager to get container object
+def clean():
+    # initializing variables
 
-    # pruning the container or deleting it
-    client.prune(container)
+    # will use container manager to get a list of container objects
+    containers = []
+    # get a list of running containers and kill them
+
+    # loop / command that clears that cache of containers
+
     # print that the container has been cleared
     print("Container cache cleared!")
 
