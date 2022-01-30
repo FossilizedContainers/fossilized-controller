@@ -55,11 +55,11 @@ def stop():
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
 @cli.command()
-def clean():
+@cli.prompt("Please type the name of the container you would like to clear from the cache: ")
+def clean(container):
     # getting the container using dockers name attribute
     # will use container manager to get container object
-    container = client.name
-    container = client.name
+
     # pruning the container or deleting it
     client.prune(container)
     # print that the container has been cleared
@@ -76,15 +76,17 @@ def help():
 # This function will upload the container to dockerhub or github
 # Functionality will be implemented later
 @cli.command()
-def upload():
+@cli.prompt("Please type the name of the container you would like to upload: ")
+def upload(container):
     pass
 
 # This function will pause the container specified
 @cli.command()
-def pause():
+@cli.prompt("Please type the name of the container you would like to pause: ")
+def pause(container):
     # add a try / catch block to catch when the container can't be paused?
     # will use container manager to get container object
-    container = client.name
+
     # using dockers pause function to pause the container
     container.pause()
     # printing that the container has been successfully paused
@@ -92,10 +94,11 @@ def pause():
 
 # This function will unpause the container specified
 @cli.command()
-def unpause():
+@cli.prompt("Please type the name of the container you would like to unpause: ")
+def unpause(container):
     # add a try / catch block to catch when the container can't be unpaused?
     # will use container manager to get container object
-    container = client.name
+
     # using dockers pause function to pause the container
     container.unpause()
     # printing that the container has been successfully paused
