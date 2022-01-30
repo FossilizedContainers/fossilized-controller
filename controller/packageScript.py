@@ -108,7 +108,10 @@ def unpause(container):
 def main():
     global client
     client = docker.from_env()
-    cli()
+    try:
+        cli()
+    except:
+        print("An exception occurred while trying to perform the latest action")
 
 
 if __name__ == '__main__':
