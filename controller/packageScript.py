@@ -56,13 +56,18 @@ def stop():
 @cli.command()
 def clean():
     # initializing variables
-
-    # will use container manager to get a list of container objects
+    killIndex = 0
+    pruneIndex = 0
+    # will use container manager to get a list of container objects - check uml diagram at the top of 4
     containers = []
-    # get a list of running containers and kill them
-
+    # loop through the list of containers and kill them
+    while killIndex < len(containers):
+        containers[killIndex].kill()
+        killIndex += 1
     # loop / command that clears that cache of containers
-
+    while pruneIndex < len(containers):
+        containers[pruneIndex].prune()
+        pruneIndex += 1
     # print that the container has been cleared
     print("Container cache cleared!")
 
