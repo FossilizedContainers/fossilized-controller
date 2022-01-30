@@ -1,6 +1,5 @@
 import click
 import docker
-import requests
 
 
 # creating a group of commands that can be run
@@ -57,7 +56,6 @@ def stop():
 @cli.command()
 @cli.prompt("Please type the name of the container you would like to clear from the cache: ")
 def clean(container):
-    # getting the container using dockers name attribute
     # will use container manager to get container object
 
     # pruning the container or deleting it
@@ -84,7 +82,6 @@ def upload(container):
 @cli.command()
 @cli.prompt("Please type the name of the container you would like to pause: ")
 def pause(container):
-    # add a try / catch block to catch when the container can't be paused?
     # will use container manager to get container object
 
     # using dockers pause function to pause the container
@@ -96,7 +93,6 @@ def pause(container):
 @cli.command()
 @cli.prompt("Please type the name of the container you would like to unpause: ")
 def unpause(container):
-    # add a try / catch block to catch when the container can't be unpaused?
     # will use container manager to get container object
 
     # using dockers pause function to pause the container
