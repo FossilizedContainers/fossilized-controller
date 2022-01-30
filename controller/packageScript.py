@@ -56,7 +56,15 @@ def stop():
 # result of deleting the cache
 @cli.command()
 def clean():
-    pass
+    # getting the container using dockers name attribute
+    # will use container manager to get container object
+    container = client.name
+    container = client.name
+    # pruning the container or deleting it
+    client.prune(container)
+    # print that the container has been cleared
+    print("Container cache cleared!")
+
 
 # This function prints the url to our helper page or a clickable link that takes the
 # user to our help page
@@ -71,11 +79,27 @@ def help():
 def upload():
     pass
 
-# This function will pause all or some of the containers specified
-# Parameters - container, list of container(s) to be paused ( not required )
+# This function will pause the container specified
 @cli.command()
-def pause(container = []):
-    pass
+def pause():
+    # add a try / catch block to catch when the container can't be paused?
+    # will use container manager to get container object
+    container = client.name
+    # using dockers pause function to pause the container
+    container.pause()
+    # printing that the container has been successfully paused
+    print("Container paused \n")
+
+# This function will unpause the container specified
+@cli.command()
+def unpause():
+    # add a try / catch block to catch when the container can't be unpaused?
+    # will use container manager to get container object
+    container = client.name
+    # using dockers pause function to pause the container
+    container.unpause()
+    # printing that the container has been successfully paused
+    print("Container unpaused \n")
 
 # main to initiate variables and group
 def main():
