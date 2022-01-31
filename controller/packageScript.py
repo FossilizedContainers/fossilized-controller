@@ -22,7 +22,9 @@ def create():
 
 
 #
-# there will be more here soon
+# TO DO: add an optional argument for an image name.
+#        This is so they can use images they pulled from Dockerhub
+# TO DO: add error checking for a dockerfile in current directory
 #
 @cli.command()
 def run():
@@ -39,16 +41,29 @@ def run():
 #
 # there will be more here soon
 #
+# An example docker container for testing this command
+# docker run -d alpine sh -c 'while sleep 3600; do :; done'
 @cli.command()
 def display():
-    pass
+
+    # TO DO: Figure out why the image name does not show
+    print("STATUS          NAME")
+    for container in client.containers.list():
+        # TO DO: Format the string better
+        # print(container.image.get("Image"))
+        print(container.status + "         " +
+              container.name + "\n")
 
 #
-# there will be more here soon
+# TO DO: Add an option to stop one container
 #
 @cli.command()
 def stop():
-    pass
+    print("Stopping all containers...\n")
+
+    for container in client.containers.list():
+        print("The container " + container.name + " has been stopped...\n")
+        container.stop()
 
 # This command will clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
@@ -79,16 +94,18 @@ def help():
     # printing the URL to our help page
     print("https://github.com/FossilizedContainers/fossilized-controller")
 
+# NOTE: I had to comment out the @cli.prompts because they were throwing errors for me - Emily
+
 # This function will upload the container to dockerhub or github
 # Functionality will be implemented later
 @cli.command()
-@cli.prompt("Please type the name of the container you would like to upload: ")
+# @cli.prompt("Please type the name of the container you would like to upload: ")
 def upload(container):
     pass
 
 # This function will pause the container specified
 @cli.command()
-@cli.prompt("Please type the name of the container you would like to pause: ")
+# @cli.prompt("Please type the name of the container you would like to pause: ")
 def pause(container):
     # will use container manager to get container object
 
@@ -99,7 +116,7 @@ def pause(container):
 
 # This function will unpause the container specified
 @cli.command()
-@cli.prompt("Please type the name of the container you would like to unpause: ")
+# @cli.prompt("Please type the name of the container you would like to unpause: ")
 def unpause(container):
     # will use container manager to get container object
 
@@ -112,6 +129,8 @@ def unpause(container):
 def main():
     global client
     client = docker.from_env()
+
+    # The exception is always showing up for me - Emily
     try:
         cli()
     except:
