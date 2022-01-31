@@ -56,14 +56,15 @@ def stop():
 @cli.command()
 def clean():
     # initializing variables
-    killIndex = 0
     pruneIndex = 0
+    # loop through the list of containers and kill them if there are running containers
+    if ():  # function call to get a list of running containers, stops the running containers if there are any
+        killIndex = 0
+        while killIndex < len(containers):
+            containers[killIndex].kill()
+            killIndex += 1
     # will use container manager to get a list of container objects - check uml diagram at the top of 4
     containers = []
-    # loop through the list of containers and kill them
-    while killIndex < len(containers):
-        containers[killIndex].kill()
-        killIndex += 1
     # loop / command that clears that cache of containers
     while pruneIndex < len(containers):
         containers[pruneIndex].prune()
@@ -82,14 +83,15 @@ def help():
 # This function will upload the container to dockerhub or github
 # Functionality will be implemented later
 @cli.command()
-@cli.prompt("Please type the name of the container you would like to upload: ")
-def upload(container):
+def upload():
+    container = cli.prompt("Please type the name of the container you would like to upload: ")
     pass
 
 # This function will pause the container specified
 @cli.command()
-@cli.prompt("Please type the name of the container you would like to pause: ")
-def pause(container):
+def pause():
+    # prompting the user for the name of the container to be paused
+    container = cli.prompt("Please type the name of the container you would like to pause: ")
     # will use container manager to get container object
 
     # using dockers pause function to pause the container
@@ -99,8 +101,9 @@ def pause(container):
 
 # This function will unpause the container specified
 @cli.command()
-@cli.prompt("Please type the name of the container you would like to unpause: ")
-def unpause(container):
+def unpause():
+    # prompting the user for the name of the container to be unpaused
+    container = cli.prompt("Please type the name of the container you would like to unpause: ")
     # will use container manager to get container object
 
     # using dockers pause function to pause the container
