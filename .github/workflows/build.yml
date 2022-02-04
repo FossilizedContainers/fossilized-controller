@@ -1,0 +1,21 @@
+name: Deploy
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - name: Check repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python 3.x
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.x
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true

@@ -1,6 +1,5 @@
 import click
 import docker
-import requests
 
 
 # creating a group of commands that can be run
@@ -48,44 +47,78 @@ def display():
 # there will be more here soon
 #
 @cli.command()
-def help():
+def stop():
     pass
 
-#
-# there will be more here soon
-#
-@cli.command()
-def upload():
-    pass
-
-#
-# there will be more here soon
-#
+# This command will clear out the cache of containers currently on the machine
+# This function takes no parameters and does not return anything, it simply prints the
+# result of deleting the cache
 @cli.command()
 def clean():
-    print("Stopping all containers...\n")
-    for container in client.containers.list():
-        container.stop()
+    # initializing variables
+    pruneIndex = 0
+    # loop through the list of containers and kill them if there are running containers
+    if ():  # function call to get a list of running containers, stops the running containers if there are any
+        killIndex = 0
+        while killIndex < len(containers):
+            containers[killIndex].kill()
+            killIndex += 1
+    # will use container manager to get a list of container objects - check uml diagram at the top of 4
+    containers = []
+    # loop / command that clears that cache of containers
+    while pruneIndex < len(containers):
+        containers[pruneIndex].prune()
+        pruneIndex += 1
+    # print that the container has been cleared
+    print("Container cache cleared!")
 
-    print("Deleting all containers...\n")
-    client.containers.prune()
 
-#
-# the client to connect to containers
-# code contained is copied from the Flaks-HTTP-server-client repo
-def client():
-     # creating a dictionary to send the LiPD file to the server
-    files = {"pond": open("3MPond.Pellatt.2000.lpd", 'rb')}
-    # creating a variable that will recieve the netCDF file from the response message and sending the file(s) to the client
-    netCDF = requests.post('http://127.0.0.1:23657/', files=files)
-    # printing the file that the client recieved back from the srever in the response message
-    print(netCDF.content)
+# This function prints the url to our helper page or a clickable link that takes the
+# user to our help page
+@cli.command()
+def help():
+    # printing the URL to our help page
+    print("https://github.com/FossilizedContainers/fossilized-controller")
+
+# This function will upload the container to dockerhub or github
+# Functionality will be implemented later
+@cli.command()
+def upload():
+    container = cli.prompt("Please type the name of the container you would like to upload: ")
+    pass
+
+# This function will pause the container specified
+@cli.command()
+def pause():
+    # prompting the user for the name of the container to be paused
+    container = cli.prompt("Please type the name of the container you would like to pause: ")
+    # will use container manager to get container object
+
+    # using dockers pause function to pause the container
+    container.pause()
+    # printing that the container has been successfully paused
+    print("Container paused \n")
+
+# This function will unpause the container specified
+@cli.command()
+def unpause():
+    # prompting the user for the name of the container to be unpaused
+    container = cli.prompt("Please type the name of the container you would like to unpause: ")
+    # will use container manager to get container object
+
+    # using dockers pause function to pause the container
+    container.unpause()
+    # printing that the container has been successfully paused
+    print("Container unpaused \n")
 
 # main to initiate variables and group
 def main():
     global client
     client = docker.from_env()
-    cli()
+    try:
+        cli()
+    except:
+        print("An exception occurred while trying to perform the latest action")
 
 
 if __name__ == '__main__':
