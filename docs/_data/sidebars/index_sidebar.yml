@@ -22,9 +22,22 @@ entries:
   - title: Overview
     output: web, pdf
     folderitems:
-
     - title: Get started
       url: /index.html
       output: web, pdf
       type: homepage
+  - title: Docker
+    output: web, pdf
+    folderitems:
+    - title: Basics
+      url: /docker.html
+      output: web, pdf
+      type: frontmatter
+  - title: Documentation
+    output: web, pdf
+    folderitems:
+    - title: Management
+      url: /managing_docs.html
+      output: web
+      type: frontmatter
 # Copyright 2021 Google LLC
