@@ -2,7 +2,7 @@ import click
 import docker
 
 
-# creating a group of commands that can be run
+# creating a group using the click library in order to make functions commands
 @click.group()
 def cli():
     pass
@@ -78,14 +78,15 @@ def clean():
 @cli.command()
 def help():
     # printing the URL to our help page
-    print("https://github.com/FossilizedContainers/fossilized-controller")
+    print("Temporary link to projects github: https://github.com/FossilizedContainers/fossilized-controller")
 
-# This function will upload the container to dockerhub or github
-# Functionality will be implemented later
+# This function allows the user to upload a container image to a docker repository
 @cli.command()
 def upload():
+    # prompting the user for the name of the container as well as the name of the repository
     container = cli.prompt("What container or image would you like to upload? ")
     repository = cli.prompt("What is the name of the repository you wish to upload to?")
+
     # will get the container object using the get container from the container manager
 
     # using the push function from the docker library to upload to the specified repository
@@ -95,10 +96,11 @@ def upload():
 def pause():
     # prompting the user for the name of the container to be paused
     container = cli.prompt("Please type the name of the container you would like to pause: ")
+
     # will use container manager to get container object
 
     # using dockers pause function to pause the container
-    container.pause()
+
     # printing that the container has been successfully paused
     print("Container paused! \n")
 
@@ -107,20 +109,24 @@ def pause():
 def unpause():
     # prompting the user for the name of the container to be unpaused
     container = cli.prompt("Please type the name of the container you would like to unpause: ")
+
     # will use container manager to get container object
 
     # using dockers pause function to pause the container
-    container.unpause()
+
     # printing that the container has been successfully paused
     print("Container unpaused! \n")
 
 # main to initiate variables and group
 def main():
+    # creating a global container to test functionality
     global client
     client = docker.from_env()
+    # try and except block to catch any errors in creating the click group
     try:
         cli()
     except:
+        # printing that there was an error ( possibility add a more descriptive message )
         print("An exception occurred while trying to perform the latest action!")
 
 
