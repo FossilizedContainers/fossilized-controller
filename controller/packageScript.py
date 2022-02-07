@@ -84,8 +84,11 @@ def help():
 # Functionality will be implemented later
 @cli.command()
 def upload():
-    container = cli.prompt("Please type the name of the container you would like to upload: ")
-    pass
+    container = cli.prompt("What container or image would you like to upload? ")
+    repository = cli.prompt("What is the name of the repository you wish to upload to?")
+    # will get the container object using the get container from the container manager
+
+    # using the push function from the docker library to upload to the specified repository
 
 # This function will pause the container specified
 @cli.command()
@@ -97,7 +100,7 @@ def pause():
     # using dockers pause function to pause the container
     container.pause()
     # printing that the container has been successfully paused
-    print("Container paused \n")
+    print("Container paused! \n")
 
 # This function will unpause the container specified
 @cli.command()
@@ -109,7 +112,7 @@ def unpause():
     # using dockers pause function to pause the container
     container.unpause()
     # printing that the container has been successfully paused
-    print("Container unpaused \n")
+    print("Container unpaused! \n")
 
 # main to initiate variables and group
 def main():
@@ -118,7 +121,7 @@ def main():
     try:
         cli()
     except:
-        print("An exception occurred while trying to perform the latest action")
+        print("An exception occurred while trying to perform the latest action!")
 
 
 if __name__ == '__main__':
