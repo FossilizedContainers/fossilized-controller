@@ -1,5 +1,6 @@
 import click
 import docker
+from os import listdir
 
 
 # creating a group using the click library in order to make functions commands
@@ -15,10 +16,55 @@ def cli():
 # adding the hello-world command to the group
 @cli.command()
 def create():
-    example = click.prompt("Please specify what image you would like to use", type=str)
-    message = "echo "
-    message += click.prompt("Please enter a message for the container to display", type=str)
-    print("\nCreating new container...")
+    # initializing variables
+    image = ""
+    language = ""
+    files = []
+    port = 0
+    fileSuffixFlag = False
+    fileSuffix = ""
+
+    # creating a docker file to create the image
+    Dockerfile = open("Dockerfile", "w")
+
+    # copying all of the files to a list
+    files = [file for file in listdir("/")]
+
+    # prompting the user for the image they would like to use
+    image = cli.prompt("What image would you like your container to use?", default="Ubuntu")
+    image = image.lower()
+    Dockerfile.write("FROM " + image + ":latest\n")
+
+    # search the current directory files for the language
+    for index in files[0]:
+        if index == ".":
+            fileSuffixFlag = True
+        fileSuffix += index
+    # check if it is .r or .py
+    if fileSuffix == ".r":
+        language = "R"
+    else:
+        language = "python"
+
+    # prompting the user for the language that will be used
+    language = cli.prompt("What programming language are you using?", default=language)
+    language = language.lower()
+
+    # installing conda in the environment and adding the command to run it and create the yaml file
+    Dockerfile.write("RUN conda env create -f environment.yml\n")
+
+    # grab all of the files from the current directory - potentially using gitignore to remove unneeded files
+    Dockerfile.write("COPY . /\n")
+
+    # ask the user for the port number to be used for the containers server
+    port = cli.prompt("What port would you like the server to run on?", default=80)
+    Dockerfile.write("EXPOSE " + port)
+
+    # writing commands to the docker file
+    Dockerfile.write("CMD " + language + "/" + main )
+
+    # closing the docker file that was being edited
+    Dockerfile.close()
 
 
 #
