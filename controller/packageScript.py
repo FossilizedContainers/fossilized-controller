@@ -23,7 +23,7 @@ def create():
     files = [file for file in walk("./")]
 
     # prompting the user for the image they would like to use
-    image = cli.prompt("What image would you like your container to use?", default="ubuntu")
+    image = cli.prompt("What image would you like your container to use? ( Default is ubuntu ) ", default="ubuntu")
     image = image.lower()
     docker_file.write("FROM " + image + ":latest\n")
 
@@ -37,17 +37,17 @@ def create():
             break
 
     # prompting the user for the language that will be used
-    language = cli.prompt("What programming language are you using?", default=language)
+    language = cli.prompt("What programming language are you using? ( Default is Python or R)", default=language)
     language = language.lower()
 
     # installing conda in the environment and adding the command to run it and create the yaml file
-    docker_file.write("RUN conda env create -f environment.yml\n")
+    docker_file.write("RUN conda env create -f environment.yml\n")  # not certain this works
 
     # grab all of the files from the current directory - potentially using gitignore to remove unneeded files
     docker_file.write("COPY . /\n")
 
     # ask the user for the port number to be used for the containers server
-    port = cli.prompt("What port would you like the server to run on?", default=80)
+    port = cli.prompt("What port would you like the server to run on? ( Default is 80 ) ", default=80)
     docker_file.write("EXPOSE " + port)
 
     # writing commands to the docker file
