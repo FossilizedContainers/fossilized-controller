@@ -6,29 +6,43 @@ from flask import send_from_directory
 from flask import request
 from lipd import readLipd
 
-app = Flask(__name__)
+class pythonAdaptor:
+    app = Flask(__name__)
 
+    # will add more as we build
+    def __init__(self):
+        pass
 
-@app.route('/', methods=['POST'])
-def receiveLiPD():
-    metadata = json.loads(request.files['metadata.json'].read())
-    parameters = metadata['parameters']
-    inputs = metadata['inputs']
+    # function to read the lipd files and store them in variables
+    @app.route('/', methods=['POST'])
+    def receive_LiPD(self):
+        metadata = json.loads(request.files['metadata.json'].read())
+        parameters = metadata['parameters']
+        inputs = metadata['inputs']
 
-    # read the input lipd files
-    input_lipds = {}
-    for input in inputs:
-        file = request.files[input]
-        file.save(input)
-        input_lipds[input] = lipd.readLipd("./" + input)
+        # read the input lipd files
+        input_lipds = {}
+        for input in inputs:
+            file = request.files[input]
+            file.save(input)
+            input_lipds[input] = lipd.readLipd("./" + input)
 
-    # here we would pass parameters & input_lipds to the climate model
-    print(parameters)
-    print(input_lipds)
+        # here we would pass parameters & input_lipds to the climate model
+        print(parameters)
+        print(input_lipds)
 
-    # fake NetCDF file that would really come from the climate model
-    return send_from_directory("./static/", "test.nc")
+        # fake NetCDF file that would really come from the climate model
+        return send_from_directory("./static/", "test.nc")
 
+    # function to add the parameters to a list and return that list
+    def get_parameters(self):
+        # parse the json file and store the parameters in a list
+        pass
 
-# setting the host and port for the server to run on
-app.run(host='0.0.0.0', port=4000)
+    # function to add the files being used to a list and return the list
+    def get_files(self):
+        # parse the json file, and find the lipd files
+        pass
+
+    # setting the host and port for the server to run on
+    app.run(host='0.0.0.0', port=4000)
