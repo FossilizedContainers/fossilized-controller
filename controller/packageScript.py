@@ -40,8 +40,13 @@ def create():
     language = cli.prompt("What programming language are you using? ( Default is Python or R)", default=language)
     language = language.lower()
 
-    # installing conda in the environment and adding the command to run it and create the yaml file
-    docker_file.write("RUN conda env create -f environment.yml\n")  # not certain this works
+    # downloading and installing conda in the environment
+    docker_file.write("RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda")
+    docker_file.write("RUN ./Miniconda3-latest-Linux-x86_64.sh")
+
+    # copying the users environment file to the Dockerfile and creating the environment
+    docker_file.write("COPY environment.yml")
+    docker_file.write("RUN conda env create -f environment.yml\n")
 
     # grab all of the files from the current directory - potentially using gitignore to remove unneeded files
     docker_file.write("COPY . /\n")
