@@ -17,8 +17,8 @@ class pythonAdaptor:
     @app.route('/', methods=['POST'])
     def receive_LiPD(self):
         metadata = json.loads(request.files['metadata.json'].read())
-        parameters = metadata['parameters']
-        inputs = metadata['inputs']
+        parameters = get_parameters(metadata)
+        inputs = get_files(metadata)
 
         # read the input lipd files
         input_lipds = {}
@@ -35,14 +35,14 @@ class pythonAdaptor:
         return send_from_directory("./static/", "test.nc")
 
     # function to add the parameters to a list and return that list
-    def get_parameters(self):
-        # parse the json file and store the parameters in a list
-        pass
+    def get_parameters(self, metadata):
+        # using the json key to return the parameters
+        return metadata['parameters']
 
     # function to add the files being used to a list and return the list
-    def get_files(self):
-        # parse the json file, and find the lipd files
-        pass
+    def get_files(self, metadata):
+        # using the json key to return the files
+        return metadata['inputs']
 
     # setting the host and port for the server to run on
     app.run(host='0.0.0.0', port=4000)
