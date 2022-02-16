@@ -3,7 +3,8 @@ from flask import *
 from lipd import *
 from json import *
 
-class pythonAdaptor:
+# class allows the user to call pythonAdapter.server to get the data from the controller
+class pythonAdapter:
 
     app = Flask(__name__)
 
@@ -26,20 +27,21 @@ class pythonAdaptor:
             input_lipds[entry] = lipd.readLipd("./" + entry)
 
         # here we would pass parameters & input_lipds to the climate model
+        # passing the parameters and inputs into the climate model
         print(parameters)
         print(input_lipds)
 
-        # fake NetCDF file that would really come from the climate model
+        # the file(s) generated being returned from their directory - temporary test file for now
         return send_from_directory("./static/", "test.nc")
 
-    # function to add the parameters to a list and return that list
+    # function to get the list of parameters from the json file
     def get_parameters(self, metadata):
-        # using the json key to return the parameters
+        # using the json key "parameters" to return the parameters
         return metadata['parameters']
 
-    # function to add the files being used to a list and return the list
+    # function to get the list of files from the json file
     def get_files(self, metadata):
-        # using the json key to return the files
+        # using the json key "inputs" to return the files
         return metadata['inputs']
 
     # setting the host and port for the server to run on
