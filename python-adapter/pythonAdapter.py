@@ -1,12 +1,10 @@
-import flask
 import lipd
-import json
-from flask import Flask
-from flask import send_from_directory
-from flask import request
-from lipd import readLipd
+from flask import *
+from lipd import *
+from json import *
 
 class pythonAdaptor:
+
     app = Flask(__name__)
 
     # will add more as we build
@@ -15,17 +13,17 @@ class pythonAdaptor:
 
     # function to read the lipd files and store them in variables
     @app.route('/', methods=['POST'])
-    def receive_LiPD(self):
+    def server(self):
         metadata = json.loads(request.files['metadata.json'].read())
-        parameters = get_parameters(metadata)
-        inputs = get_files(metadata)
+        parameters = self.get_parameters(metadata)
+        inputs = self.get_files(metadata)
 
         # read the input lipd files
         input_lipds = {}
-        for input in inputs:
-            file = request.files[input]
-            file.save(input)
-            input_lipds[input] = lipd.readLipd("./" + input)
+        for entry in inputs:
+            file = request.files[entry]
+            file.save(entry)
+            input_lipds[entry] = lipd.readLipd("./" + entry)
 
         # here we would pass parameters & input_lipds to the climate model
         print(parameters)
