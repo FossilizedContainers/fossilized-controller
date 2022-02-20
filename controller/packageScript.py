@@ -1,7 +1,7 @@
 import click
 import docker
 from os import walk
-
+import controller.model as controller_model
 
 # creating a group using the click library in order to make functions commands
 @click.group()
@@ -67,16 +67,12 @@ def create():
 # there will be more here soon
 #
 @cli.command()
-def run():
-    # Build the image
-    print("Building image from docker_file...\n")
-    client.images.build(path=".", tag="tech-demo")
-    print("Finished building image...\n")
-
-    # Run the container
-    print("Running the container...\n")
-    cont = client.containers.run("tech-demo", detach=True)
-    print(cont.logs().decode("utf-8"))
+@click.argument('container')
+def run(container):
+    controller = controller_model.init_controller()
+    container = controller.get_container(container)
+    print("Running the container...")
+    result = controller.run(container, "./run_metadata.json")
 
 #
 # there will be more here soon
