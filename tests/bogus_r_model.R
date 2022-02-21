@@ -1,5 +1,3 @@
-# Might cause issues if environment does not already have lipdR installed
-
 # install lipdR library using remotes package
 # remotes::install_github("nickmckay/LiPD-Utilities", subdir = "R", quiet = TRUE)
 
@@ -7,16 +5,28 @@
 library("lipdR") 
 library("ncdf4")
 
-fakeModel = function(bogus, lipd_file) {
+# call to R adapter package
+# library(rpresto)
+
+# TODO: A way to persist the adapter between the main function file call and 
+# HTTP Server
+
+fakeModel = function(bogus, lipd.file) {
+  # Register the main function / process
+  # adapter.register(registerFunction)
+}
+
+registerFunction = function () {
+  # adapter.getParams()
   
-  lipd_results <- readLipd(lipd_file)
+  lipd.results <- readLipd(lipd.file)
   
-  if (!(length(lipd_results))) {
+  if (!(length(lipd.results))) {
     return("Invalid LiPD file")
   }
   
-  net_cdf_path <- 
+  net.cdf.path <- 
     "C:/Users/mumbi/Documents/spring 2022/cs 486/fossilized-controller/test/nc-files/WMI_Lear.nc"
   
-  return(net_cdf_path)
+  # adapter.send(net.cdf.path)
 }
