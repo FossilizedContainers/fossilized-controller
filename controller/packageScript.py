@@ -3,6 +3,7 @@ import docker
 from os import walk
 import controller.model as controller_model
 
+
 # creating a group using the click library in order to make functions commands
 @click.group()
 def cli():
@@ -74,12 +75,14 @@ def run(container):
     print("Running the container...")
     result = controller.run(container, "./run_metadata.json")
 
+
 #
 # there will be more here soon
 #
 @cli.command()
 def display():
     pass
+
 
 #
 # there will be more here soon
@@ -88,6 +91,7 @@ def display():
 def stop():
     pass
 
+
 # This command will clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
@@ -95,14 +99,17 @@ def stop():
 def clean():
     # initializing variables
     pruneIndex = 0
+
     # loop through the list of containers and kill them if there are running containers
     if ():  # function call to get a list of running containers, stops the running containers if there are any
         killIndex = 0
         while killIndex < len(containers):
             containers[killIndex].kill()
             killIndex += 1
+
     # will use container manager to get a list of container objects - check uml diagram at the top of 4
-    containers = []
+    containers = docker.list()
+
     # loop / command that clears that cache of containers
     while pruneIndex < len(containers):
         containers[pruneIndex].prune()
@@ -114,9 +121,10 @@ def clean():
 # This function prints the url to our helper page or a clickable link that takes the
 # user to our help page
 @cli.command()
-def help():
+def guide():
     # printing the URL to our help page
     print("Temporary link to projects github: https://github.com/FossilizedContainers/fossilized-controller")
+
 
 # This function allows the user to upload a container image to a docker repository
 @cli.command()
@@ -126,8 +134,11 @@ def upload():
     repository = cli.prompt("What is the name of the repository you wish to upload to?")
 
     # will get the container object using the get container from the container manager
+    controller = controller_model.init_controller()
+    container_object = controller.get_container(container)
 
     # using the push function from the docker library to upload to the specified repository
+    container_object.push(repository)  # need to test functionality more
 
 # This function will pause the container specified
 @cli.command()
@@ -135,12 +146,16 @@ def pause():
     # prompting the user for the name of the container to be paused
     container = cli.prompt("Please type the name of the container you would like to pause: ")
 
-    # will use container manager to get container object
+    # use container manager to get container object
+    controller = controller_model.init_controller()
+    container_object = controller.get_container(container)
 
     # using dockers pause function to pause the container
+    container_object.pause()
 
     # printing that the container has been successfully paused
     print("Container paused! \n")
+
 
 # This function will unpause the container specified
 @cli.command()
@@ -148,18 +163,19 @@ def unpause():
     # prompting the user for the name of the container to be unpaused
     container = cli.prompt("Please type the name of the container you would like to unpause: ")
 
-    # will use container manager to get container object
+    # use container manager to get container object
+    controller = controller_model.init_controller()
+    container_object = controller.get_container(container)
 
-    # using dockers pause function to pause the container
+    # using dockers unpause function to pause the container
+    container_object.unpause()
 
     # printing that the container has been successfully paused
     print("Container unpaused! \n")
 
+
 # main to initiate variables and group
 def main():
-    # creating a global container to test functionality
-    global client
-    client = docker.from_env()
     # try and except block to catch any errors in creating the click group
     try:
         cli()
