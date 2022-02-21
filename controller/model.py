@@ -3,18 +3,19 @@ import pickle
 import os
 import docker
 import requests
+from os.path import expanduser
 
 
 # Class for information about a container
 class ContainerInfo:
-    def __init__(self, image, address="127.0.0.1", port=80):
+    def __init__(self, image: str, address: str = "127.0.0.1", port: int = 80):
         self.container_port = None
         self.image = image
         self.address = address
         self.port = port
         self.container = None
 
-    def start(self, controller, run_metadata_file):
+    def start(self, controller, run_metadata_file: str):
         # None in the ports dict assigns it to a random host port
         self.container = controller.client.containers.run(self.image, detach=True, ports={self.port: None})
         self.container.reload()
@@ -49,12 +50,38 @@ class Controller:
             self.containers = []
 
     def save(self):
+        os.makedirs(os.path.dirname(cache_file), exist_ok=True)
         with open(self.cache_file, 'wb') as f:
             pickle.dump(self.containers, f)
 
-    def add_container(self, container):
-        self.containers.append(container)
-        self.save()
+    # search through the list of containers to find the one with the given image
+    def __find_container(self, image: str):
+        for container in self.containers:
+            if container.image == image:
+                return container
 
-    def run(self, container, run_metadata_file):
+    # find an existing container, or create one and to the list of containers
+    def get_container(self, image: str):
+        c = self.__find_container(image)
+        if c is None:
+            c = ContainerInfo(image)
+            self.containers.append(c)
+            self.save()
+        return c
+
+    def run(self, container: ContainerInfo, run_metadata_file: str):
         return container.start(self, run_metadata_file)
+
+
+# main controller instance, use init_controller() below
+__controller = None
+# location of the cache file on disk
+__cache_file = expanduser("~") + "/.presto/controller.cache"
+
+
+# Initialize the controller singleton if it doesn't exist
+def init_controller() -> Controller:
+    global __controller
+    if __controller is None:
+        __controller = Controller(__cache_file)
+    return __controller
