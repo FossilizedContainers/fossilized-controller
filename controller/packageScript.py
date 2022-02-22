@@ -31,6 +31,8 @@ def create():
         COPY . /
         # create the conda environment
         RUN conda env create -f environment.yml
+        # activating the conda environment
+        RUN conda activate environment
         CMD {run_command}
         """
 
@@ -62,7 +64,7 @@ def run(container):
 @cli.command()
 def display():
     controller = controller_model.init_controller()
-    print(controller.containers)
+    print("List of containers: " + controller.containers)
 
 
 #
@@ -84,7 +86,6 @@ def stop():
 # result of deleting the cache
 @cli.command()
 def clean():
-    # TODO: re-write based on container manager functions
     result = docker.prune()
     print("All stopped containers have been deleted!")
     print("RESULT: " + result)
