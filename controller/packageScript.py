@@ -20,45 +20,20 @@ def create():
     # creating a docker file to create the image
     docker_file = open("Dockerfile", "w")
 
-    # copying all of the files to a list
-    files = [file for file in walk("./")]
+    # prompting the user for the command to run the main file
+    run_command = cli.prompt("What is the command to run your main file?")
 
-    # prompting the user for the image they would like to use
-    image = cli.prompt("What image would you like your container to use? ( Default is ubuntu ) ", default="ubuntu")
-    image = image.lower()
-    docker_file.write("FROM " + image + ":latest\n")
+    file_contents = """FROM continuumio/anaconda3
+                        COPY . /
+                        RUN conda env create -f environment.yml
+                        CMD {run_command}
+                        """
 
-    # search the current directory files for the language
-    for file in files:
-        if file.endswith(".py"):
-            language = "python"
-            break
-        if file.endswith(".r"):
-            language = "r"
-            break
+    # adding the run command from the user to the string
+    file_contents.format(run_command=run_command)
 
-    # prompting the user for the language that will be used
-    language = cli.prompt("What programming language are you using? ( Default is Python or R)", default=language)
-    language = language.lower()
-
-    # downloading and installing conda in the environment
-    docker_file.write("RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda")
-    docker_file.write("RUN ./Miniconda3-latest-Linux-x86_64.sh")
-
-    # copying the users environment file to the Dockerfile and creating the environment
-    docker_file.write("COPY environment.yml")
-    docker_file.write("RUN conda env create -f environment.yml\n")
-
-    # grab all of the files from the current directory - potentially using gitignore to remove unneeded files
-    docker_file.write("COPY . /\n")
-
-    # ask the user for the port number to be used for the containers server
-    port = cli.prompt("What port would you like the server to run on? ( Default is 80 ) ", default=80)
-    docker_file.write("EXPOSE " + port)
-
-    # writing commands to the docker file
-    main_file = cli.prompt("What is the name of the main file in your project?")
-    docker_file.write("CMD " + language + "/" + main_file)
+    # writing the string to the docker file
+    docker_file.write(file_contents)
 
     # closing the docker file that was being edited
     docker_file.close()
@@ -139,6 +114,7 @@ def upload():
 
     # using the push function from the docker library to upload to the specified repository
     container_object.push(repository)  # need to test functionality more
+
 
 # This function will pause the container specified
 @cli.command()
