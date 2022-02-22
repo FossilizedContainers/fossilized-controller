@@ -10,24 +10,32 @@ def cli():
     pass
 
 
-# Requires: Initialized docker client,
-#           Alpine image pulled and/or available
-# TO DO:    Check if docker client is initialized, if not then pass an error
-# TO DO:    Check if the image is available, if not then pass an error
-# adding the hello-world command to the group
 @cli.command()
 def create():
     # creating a docker file to create the image
     docker_file = open("Dockerfile", "w")
 
     # prompting the user for the command to run the main file
-    run_command = cli.prompt("What is the command to run your main file?")
+    print("""
+    What is the command to run your main file?
+    Here are some examples:
+    - python3 main.py
+    - r main.R
+    - sh main.sh
+    """)
+    run_command = cli.prompt("> ")
 
-    file_contents = """FROM continuumio/anaconda3
-                        COPY . /
-                        RUN conda env create -f environment.yml
-                        CMD {run_command}
-                        """
+    file_contents = """
+    FROM continuumio/anaconda3
+
+    # copy all files to the root directory of the container
+    COPY . /
+
+    # create the conda environment
+    RUN conda env create -f environment.yml
+
+    CMD {run_command}
+    """
 
     # adding the run command from the user to the string
     file_contents.format(run_command=run_command)
