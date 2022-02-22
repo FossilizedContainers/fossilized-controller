@@ -25,7 +25,7 @@ def create():
 
     file_contents = """FROM continuumio/anaconda3
                         COPY . /
-                        RUN conda env create -f environment.yml
+                        RUN conda env create -f environment.ym
                         CMD {run_command}
                         """
 
@@ -56,7 +56,8 @@ def run(container):
 #
 @cli.command()
 def display():
-    pass
+    controller = controller_model.init_controller()
+    print(controller.containers)
 
 
 #
@@ -64,34 +65,24 @@ def display():
 #
 @cli.command()
 def stop():
-    pass
-
+    container = cli.prompt("What is the name of the container you would like to stop?")
+    controller = controller_model.init_controller()
+    container = controller.get_container(container)
+    # checking that the container is running and exists before stopping
+    if not isinstance(container.container, type(None)):
+        container.container.stop()
+    else:
+        print("ERROR: container name not found: " + container.image)
 
 # This command will clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
 @cli.command()
 def clean():
-    # initializing variables
-    pruneIndex = 0
-
-    # loop through the list of containers and kill them if there are running containers
-    if ():  # function call to get a list of running containers, stops the running containers if there are any
-        killIndex = 0
-        while killIndex < len(containers):
-            containers[killIndex].kill()
-            killIndex += 1
-
-    # will use container manager to get a list of container objects - check uml diagram at the top of 4
-    containers = docker.list()
-
-    # loop / command that clears that cache of containers
-    while pruneIndex < len(containers):
-        containers[pruneIndex].prune()
-        pruneIndex += 1
-    # print that the container has been cleared
-    print("Container cache cleared!")
-
+    # TODO: re-write based on container manager functions
+    result = docker.prune()
+    print("All stopped containers have been deleted!")
+    print("RESULT: " + result)
 
 # This function prints the url to our helper page or a clickable link that takes the
 # user to our help page
@@ -108,12 +99,14 @@ def upload():
     container = cli.prompt("What container or image would you like to upload? ")
     repository = cli.prompt("What is the name of the repository you wish to upload to?")
 
-    # will get the container object using the get container from the container manager
     controller = controller_model.init_controller()
-    container_object = controller.get_container(container)
-
-    # using the push function from the docker library to upload to the specified repository
-    container_object.push(repository)  # need to test functionality more
+    container = controller.get_container(container)
+    # checking that the container is running and exists before uploading
+    if not isinstance(container.container, type(None)):
+        container_object = (controller.get_container(container)).container
+        container_object.push(repository)  # need to test functionality more
+    else:
+        print("ERROR: container name not found: " + container.image)
 
 
 # This function will pause the container specified
@@ -124,13 +117,14 @@ def pause():
 
     # use container manager to get container object
     controller = controller_model.init_controller()
-    container_object = controller.get_container(container)
-
-    # using dockers pause function to pause the container
-    container_object.pause()
-
-    # printing that the container has been successfully paused
-    print("Container paused! \n")
+    container = (controller.get_container(container)).container
+    # checking that the container is running and exists before pausing
+    if not isinstance(container.container, type(None)):
+        container_object = (controller.get_container(container)).container
+        container_object.pause()
+        print("Container paused! \n")
+    else:
+        print("ERROR: container name not found: " + container.image)
 
 
 # This function will unpause the container specified
@@ -141,13 +135,14 @@ def unpause():
 
     # use container manager to get container object
     controller = controller_model.init_controller()
-    container_object = controller.get_container(container)
-
-    # using dockers unpause function to pause the container
-    container_object.unpause()
-
-    # printing that the container has been successfully paused
-    print("Container unpaused! \n")
+    container = controller.get_container(container)
+    # checking that the container is running and exists before unpausing
+    if not isinstance(container.container, type(None)):
+        container_object = (controller.get_container(container)).container
+        container_object.pause()
+        print("Container unpaused! \n")
+    else:
+        print("ERROR: container name not found: " + container.image)
 
 
 # main to initiate variables and group
