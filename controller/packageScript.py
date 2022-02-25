@@ -1,7 +1,7 @@
 import click
 import docker
 from os import walk
-import controller.model as controller_model
+import model as controller_model
 
 
 # creating a group using the click library in order to make functions commands
@@ -16,28 +16,27 @@ def create():
     docker_file = open("Dockerfile", "w")
 
     # prompting the user for the command to run the main file
-    print("""
-        What is the command to run your main file?
-        Here are some examples:
-        - python3 main.py
-        - r main.R
-        - sh main.sh
+    print("""What is the command to run your main file?
+Here are some examples:
+- python3 main.py
+- r main.R
+- sh main.sh
         """)
-    run_command = cli.prompt("> ")
 
-    file_contents = """
-        FROM continuumio/anaconda3
-        # copy all files to the root directory of the container
-        COPY . /
-        # create the conda environment
-        RUN conda env create -f environment.yml
-        # activating the conda environment
-        RUN conda activate environment
-        CMD {run_command}
-        """
+    run_command = click.prompt("> ")
+
+    file_contents = """FROM continuumio/anaconda3
+# copy all files to the root directory of the container
+COPY . /
+# create the conda environment
+RUN conda env create -f environment.yml
+# activating the conda environment
+RUN conda activate environment
+CMD {run_command}
+    """
 
     # adding the run command from the user to the string
-    file_contents.format(run_command=run_command)
+    file_contents = file_contents.format(run_command=run_command)
 
     # writing the string to the docker file
     docker_file.write(file_contents)
@@ -154,11 +153,12 @@ def unpause():
 # main to initiate variables and group
 def main():
     # try and except block to catch any errors in creating the click group
-    try:
-        cli()
-    except:
+    cli()
+    #try:
+    #    cli()
+    #except:
         # printing that there was an error ( possibility add a more descriptive message )
-        print("An exception occurred while trying to perform the latest action!")
+     #   print("An exception occurred while trying to perform the latest action!")
 
 
 if __name__ == '__main__':
