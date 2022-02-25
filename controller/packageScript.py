@@ -44,6 +44,16 @@ CMD {run_command}
     # closing the docker file that was being edited
     docker_file.close()
 
+    # call the function to build the container from the dockerfile
+    build(docker_file)
+
+#
+# function to build the container
+#
+def build(docker_file):
+    client = docker.from_env()
+    client.build(docker_file)
+    print("Docker container built!")
 
 #
 # there will be more here soon
