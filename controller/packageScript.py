@@ -13,7 +13,7 @@ def cli():
 @cli.command()
 def create():
     # creating a docker file to create the image
-    docker_file = open("Dockerfile", "w")
+    docker_file = open("./Dockerfile", "w")
 
     # prompting the user for the command to run the main file
     print("""What is the command to run your main file?
@@ -45,14 +45,15 @@ CMD {run_command}
     docker_file.close()
 
     # call the function to build the container from the dockerfile
-    build(docker_file)
+    build()
 
 #
 # function to build the container
 #
-def build(docker_file):
+def build():
     client = docker.from_env()
-    client.build(docker_file)
+    print("Building docker image...")
+    client.images.build(path="./", quiet=False)
     print("Docker container built!")
 
 #
@@ -81,7 +82,7 @@ def display():
 #
 @cli.command()
 def stop():
-    container = cli.prompt("What is the name of the container you would like to stop?")
+    container = click.prompt("What is the name of the container you would like to stop?")
     controller = controller_model.init_controller()
     container = controller.get_container(container)
     # checking that the container is running and exists before stopping
@@ -111,8 +112,8 @@ def guide():
 @cli.command()
 def upload():
     # prompting the user for the name of the container as well as the name of the repository
-    container = cli.prompt("What container or image would you like to upload? ")
-    repository = cli.prompt("What is the name of the repository you wish to upload to?")
+    container = click.prompt("What container or image would you like to upload? ")
+    repository = click.prompt("What is the name of the repository you wish to upload to?")
 
     controller = controller_model.init_controller()
     container = controller.get_container(container)
@@ -128,7 +129,7 @@ def upload():
 @cli.command()
 def pause():
     # prompting the user for the name of the container to be paused
-    container = cli.prompt("Please type the name of the container you would like to pause: ")
+    container = click.prompt("Please type the name of the container you would like to pause: ")
 
     # use container manager to get container object
     controller = controller_model.init_controller()
@@ -146,7 +147,7 @@ def pause():
 @cli.command()
 def unpause():
     # prompting the user for the name of the container to be unpaused
-    container = cli.prompt("Please type the name of the container you would like to unpause: ")
+    container = click.prompt("Please type the name of the container you would like to unpause: ")
 
     # use container manager to get container object
     controller = controller_model.init_controller()
@@ -163,12 +164,11 @@ def unpause():
 # main to initiate variables and group
 def main():
     # try and except block to catch any errors in creating the click group
-    cli()
-    #try:
-    #    cli()
-    #except:
+    try:
+        cli()
+    except:
         # printing that there was an error ( possibility add a more descriptive message )
-     #   print("An exception occurred while trying to perform the latest action!")
+        print("An exception occurred while trying to perform the latest action!")
 
 
 if __name__ == '__main__':
