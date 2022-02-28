@@ -21,22 +21,27 @@ Here are some examples:
 - python3 main.py
 - r main.R
 - sh main.sh
-        """)
+""")
 
     run_command = click.prompt("> ")
 
     file_contents = """FROM continuumio/anaconda3
+
+RUN conda update -n base -c defaults conda
+
+# setup conda environment
+COPY presto_environment.yml .
+RUN conda env create -f presto_environment.yml
+RUN echo "conda activate presto_container" >> ~/.bashrc
+SHELL ["/bin/bash", "--login", "-c"]
+RUN conda activate presto_container
+
 # copy all files to the root directory of the container
 COPY . /
-# create the conda environment
-RUN conda env create -f environment.yml
-# activating the conda environment
-RUN conda activate environment
-CMD {run_command}
-    """
 
-    # adding the run command from the user to the string
-    file_contents = file_contents.format(run_command=run_command)
+# run the command in the context of the environment we made
+CMD conda run --no-capture-output -n presto_container {run_command}
+""".format(run_command=run_command)
 
     # writing the string to the docker file
     docker_file.write(file_contents)
@@ -45,16 +50,20 @@ CMD {run_command}
     docker_file.close()
 
     # call the function to build the container from the dockerfile
-    build()
+    build_in_cwd()
 
 #
 # function to build the container
 #
-def build():
+def build_in_cwd():
     client = docker.from_env()
     print("Building docker image...")
     client.images.build(path="./", quiet=False)
     print("Docker container built!")
+
+@cli.command()
+def build():
+    build_in_cwd()
 
 #
 # there will be more here soon
@@ -161,15 +170,5 @@ def unpause():
         print("ERROR: container name not found: " + container.image)
 
 
-# main to initiate variables and group
-def main():
-    # try and except block to catch any errors in creating the click group
-    try:
-        cli()
-    except:
-        # printing that there was an error ( possibility add a more descriptive message )
-        print("An exception occurred while trying to perform the latest action!")
-
-
 if __name__ == '__main__':
-    main()
+    cli()
