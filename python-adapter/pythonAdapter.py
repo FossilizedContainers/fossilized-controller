@@ -3,14 +3,16 @@ from flask import *
 from lipd import *
 from json import *
 
+
 # class allows the user to call pythonAdapter.server to get the data from the controller
-class pythonAdapter:
+class PythonAdapter:
 
     app = Flask(__name__)
 
     # will add more as we build
     def __init__(self):
-        pass
+        self.metadata = {}
+
 
     # function to read the lipd files and store them in variables
     @app.route('/', methods=['POST'])
@@ -34,6 +36,13 @@ class pythonAdapter:
         # the file(s) generated being returned from their directory - temporary test file for now
         return send_from_directory("./static/", "test.nc")
 
+    def run_server(self):
+        # setting the host and port for the server to run on
+        app.run(host='0.0.0.0', port=4000)
+
+    def stop_server(self):
+        return
+
     # function to get the list of parameters from the json file
     def get_parameters(self, metadata):
         # using the json key "parameters" to return the parameters
@@ -44,5 +53,8 @@ class pythonAdapter:
         # using the json key "inputs" to return the files
         return metadata['inputs']
 
-    # setting the host and port for the server to run on
-    app.run(host='0.0.0.0', port=4000)
+    def get_output_files(self):
+        return
+
+    def set_output_files(self, str_array):
+        return
