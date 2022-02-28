@@ -7,7 +7,7 @@ tests_dir = os.path.dirname(__file__)
 python_adapter_dir = os.path.join(tests_dir, '..', 'python-adapter')
 sys.path.append(python_adapter_dir)
 
-import pythonAdapter
+import adapter
 
 def fakeModel(adapter):
 

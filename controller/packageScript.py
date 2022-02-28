@@ -73,7 +73,7 @@ def run(container):
     controller = controller_model.init_controller()
     container = controller.get_container(container)
     print("Running the container...")
-    result = controller.run(container, "./run_metadata.json")
+    result = controller.run(container, "./metadata.json")
 
 
 #

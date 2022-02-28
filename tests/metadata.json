@@ -1,0 +1,16 @@
+{
+    "parameters": {
+        "spread": true,
+        "duration": 3000,
+        "binvec": [1, 2, 3, 4, 5, 6],
+        "localization_radius": "None",
+        "data_dir": "/projects/pd_lab/data/data_assimilation/",
+        "exp_name": "default",
+        "models_for_prior": ["trace_regrid"],
+        "assimilate_selected_seasons": ["annual","summerOnly","winterOnly"]
+    },
+    "input_files": {
+        "lipd_file": "lipd-files/GeoB9307_3.Weldeab.2014.lpd",
+        "netcdf-file": "nc-files/WMI_Lear.nc"
+    }
+}
