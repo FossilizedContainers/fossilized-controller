@@ -1,7 +1,6 @@
 import click
 import docker
-from os import walk
-import controller.model as controller_model
+import model as controller_model
 
 
 # creating a group using the click library in order to make functions commands
@@ -10,59 +9,60 @@ def cli():
     pass
 
 
-# Requires: Initialized docker client,
-#           Alpine image pulled and/or available
-# TO DO:    Check if docker client is initialized, if not then pass an error
-# TO DO:    Check if the image is available, if not then pass an error
-# adding the hello-world command to the group
 @cli.command()
 def create():
     # creating a docker file to create the image
-    docker_file = open("Dockerfile", "w")
+    docker_file = open("./Dockerfile", "w")
 
-    # copying all of the files to a list
-    files = [file for file in walk("./")]
+    # prompting the user for the command to run the main file
+    print("""What is the command to run your main file?
+Here are some examples:
+- python3 main.py
+- r main.R
+- sh main.sh
+""")
 
-    # prompting the user for the image they would like to use
-    image = cli.prompt("What image would you like your container to use? ( Default is ubuntu ) ", default="ubuntu")
-    image = image.lower()
-    docker_file.write("FROM " + image + ":latest\n")
+    run_command = click.prompt("> ")
 
-    # search the current directory files for the language
-    for file in files:
-        if file.endswith(".py"):
-            language = "python"
-            break
-        if file.endswith(".r"):
-            language = "r"
-            break
+    file_contents = """FROM continuumio/anaconda3
 
-    # prompting the user for the language that will be used
-    language = cli.prompt("What programming language are you using? ( Default is Python or R)", default=language)
-    language = language.lower()
+RUN conda update -n base -c defaults conda
 
-    # downloading and installing conda in the environment
-    docker_file.write("RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda")
-    docker_file.write("RUN ./Miniconda3-latest-Linux-x86_64.sh")
+# setup conda environment
+COPY presto_environment.yml .
+RUN conda env create -f presto_environment.yml
+RUN echo "conda activate presto_container" >> ~/.bashrc
+SHELL ["/bin/bash", "--login", "-c"]
+RUN conda activate presto_container
 
-    # copying the users environment file to the Dockerfile and creating the environment
-    docker_file.write("COPY environment.yml")
-    docker_file.write("RUN conda env create -f environment.yml\n")
+# copy all files to the root directory of the container
+COPY . /
 
-    # grab all of the files from the current directory - potentially using gitignore to remove unneeded files
-    docker_file.write("COPY . /\n")
+# run the command in the context of the environment we made
+CMD conda run --no-capture-output -n presto_container {run_command}
+""".format(run_command=run_command)
 
-    # ask the user for the port number to be used for the containers server
-    port = cli.prompt("What port would you like the server to run on? ( Default is 80 ) ", default=80)
-    docker_file.write("EXPOSE " + port)
-
-    # writing commands to the docker file
-    main_file = cli.prompt("What is the name of the main file in your project?")
-    docker_file.write("CMD " + language + "/" + main_file)
+    # writing the string to the docker file
+    docker_file.write(file_contents)
 
     # closing the docker file that was being edited
     docker_file.close()
 
+    # call the function to build the container from the dockerfile
+    build_in_cwd()
+
+#
+# function to build the container
+#
+def build_in_cwd():
+    client = docker.from_env()
+    print("Building docker image...")
+    client.images.build(path="./", quiet=False)
+    print("Docker container built!")
+
+@cli.command()
+def build():
+    build_in_cwd()
 
 #
 # there will be more here soon
@@ -81,7 +81,8 @@ def run(container):
 #
 @cli.command()
 def display():
-    pass
+    controller = controller_model.init_controller()
+    print("List of containers: " + controller.containers)
 
 
 #
@@ -89,34 +90,23 @@ def display():
 #
 @cli.command()
 def stop():
-    pass
-
+    container = click.prompt("What is the name of the container you would like to stop?")
+    controller = controller_model.init_controller()
+    container = controller.get_container(container)
+    # checking that the container is running and exists before stopping
+    if not isinstance(container.container, type(None)):
+        container.container.stop()
+    else:
+        print("ERROR: container name not found: " + container.image)
 
 # This command will clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
 @cli.command()
 def clean():
-    # initializing variables
-    pruneIndex = 0
-
-    # loop through the list of containers and kill them if there are running containers
-    if ():  # function call to get a list of running containers, stops the running containers if there are any
-        killIndex = 0
-        while killIndex < len(containers):
-            containers[killIndex].kill()
-            killIndex += 1
-
-    # will use container manager to get a list of container objects - check uml diagram at the top of 4
-    containers = docker.list()
-
-    # loop / command that clears that cache of containers
-    while pruneIndex < len(containers):
-        containers[pruneIndex].prune()
-        pruneIndex += 1
-    # print that the container has been cleared
-    print("Container cache cleared!")
-
+    result = docker.prune()
+    print("All stopped containers have been deleted!")
+    print("RESULT: " + result)
 
 # This function prints the url to our helper page or a clickable link that takes the
 # user to our help page
@@ -130,59 +120,54 @@ def guide():
 @cli.command()
 def upload():
     # prompting the user for the name of the container as well as the name of the repository
-    container = cli.prompt("What container or image would you like to upload? ")
-    repository = cli.prompt("What is the name of the repository you wish to upload to?")
+    container = click.prompt("What container or image would you like to upload? ")
+    repository = click.prompt("What is the name of the repository you wish to upload to?")
 
-    # will get the container object using the get container from the container manager
     controller = controller_model.init_controller()
-    container_object = controller.get_container(container)
+    container = controller.get_container(container)
+    # checking that the container is running and exists before uploading
+    if not isinstance(container.container, type(None)):
+        container_object = (controller.get_container(container)).container
+        container_object.push(repository)  # need to test functionality more
+    else:
+        print("ERROR: container name not found: " + container.image)
 
-    # using the push function from the docker library to upload to the specified repository
-    container_object.push(repository)  # need to test functionality more
 
 # This function will pause the container specified
 @cli.command()
 def pause():
     # prompting the user for the name of the container to be paused
-    container = cli.prompt("Please type the name of the container you would like to pause: ")
+    container = click.prompt("Please type the name of the container you would like to pause: ")
 
     # use container manager to get container object
     controller = controller_model.init_controller()
-    container_object = controller.get_container(container)
-
-    # using dockers pause function to pause the container
-    container_object.pause()
-
-    # printing that the container has been successfully paused
-    print("Container paused! \n")
+    container = (controller.get_container(container)).container
+    # checking that the container is running and exists before pausing
+    if not isinstance(container.container, type(None)):
+        container_object = (controller.get_container(container)).container
+        container_object.pause()
+        print("Container paused! \n")
+    else:
+        print("ERROR: container name not found: " + container.image)
 
 
 # This function will unpause the container specified
 @cli.command()
 def unpause():
     # prompting the user for the name of the container to be unpaused
-    container = cli.prompt("Please type the name of the container you would like to unpause: ")
+    container = click.prompt("Please type the name of the container you would like to unpause: ")
 
     # use container manager to get container object
     controller = controller_model.init_controller()
-    container_object = controller.get_container(container)
-
-    # using dockers unpause function to pause the container
-    container_object.unpause()
-
-    # printing that the container has been successfully paused
-    print("Container unpaused! \n")
-
-
-# main to initiate variables and group
-def main():
-    # try and except block to catch any errors in creating the click group
-    try:
-        cli()
-    except:
-        # printing that there was an error ( possibility add a more descriptive message )
-        print("An exception occurred while trying to perform the latest action!")
+    container = controller.get_container(container)
+    # checking that the container is running and exists before unpausing
+    if not isinstance(container.container, type(None)):
+        container_object = (controller.get_container(container)).container
+        container_object.pause()
+        print("Container unpaused! \n")
+    else:
+        print("ERROR: container name not found: " + container.image)
 
 
 if __name__ == '__main__':
-    main()
+    cli()

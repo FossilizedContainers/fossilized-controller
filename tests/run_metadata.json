@@ -1,0 +1,11 @@
+{
+    "parameters": {
+        "binvec": [1, 2, 3, 4, 5, 6],
+        "spread": true,
+        "duration": 3000,
+        "data_dir": "/projects/pd_lab/data/data_assimilation/",
+        "exp_name": "default"
+    },
+    "inputs": {
+    }
+}
