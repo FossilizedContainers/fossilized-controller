@@ -20,7 +20,7 @@ class ContainerInfo:
         self.container = controller.client.containers.run(self.image, detach=True, ports={self.port: None})
         self.container.reload()
         # get the randomly assigned port
-        self.container_port = self.container.ports['HostPort']
+        self.container_port = list(self.container.ports.values())[0][0]['HostPort']
 
         run_metadata = json.load(open(run_metadata_file))
 
@@ -33,6 +33,7 @@ class ContainerInfo:
             # add the external files listed in the run metadata to the post request
             files[str(file_input)] = open(location, 'rb')
 
+        print(self.container.attrs['State'])
         results = requests.post("http://{}:{}/start".format(self.address, self.container_port), files=files)
         return results
 
@@ -50,7 +51,7 @@ class Controller:
             self.containers = []
 
     def save(self):
-        os.makedirs(os.path.dirname(cache_file), exist_ok=True)
+        os.makedirs(os.path.dirname(self.cache_file), exist_ok=True)
         with open(self.cache_file, 'wb') as f:
             pickle.dump(self.containers, f)
 

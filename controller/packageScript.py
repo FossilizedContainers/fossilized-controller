@@ -1,6 +1,5 @@
 import click
 import docker
-from os import walk
 import model as controller_model
 
 
