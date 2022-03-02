@@ -32,4 +32,4 @@ def fakeModel(adapter):
 # adapter = new Python Adapter
 
 # adapter.register_model("fakeModel(adapter)")
-# adapter.run_server()
+# adapter.start_server()
