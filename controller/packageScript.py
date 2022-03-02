@@ -48,21 +48,7 @@ CMD conda run --no-capture-output -n presto_container {run_command}
     # closing the docker file that was being edited
     docker_file.close()
 
-    # call the function to build the container from the dockerfile
-    build_in_cwd()
-
-#
-# function to build the container
-#
-def build_in_cwd():
-    client = docker.from_env()
-    print("Building docker image...")
-    client.images.build(path="./", quiet=False)
-    print("Docker container built!")
-
-@cli.command()
-def build():
-    build_in_cwd()
+    print("Dockerfile created!")
 
 #
 # there will be more here soon
