@@ -8,7 +8,8 @@ import model as controller_model
 def cli():
     pass
 
-
+# Function to create a docker file
+# This function takes no parameters and does not return a value
 @cli.command()
 def create():
     # creating a docker file to create the image
@@ -50,9 +51,8 @@ CMD conda run --no-capture-output -n presto_container {run_command}
 
     print("Dockerfile created!")
 
-#
-# there will be more here soon
-#
+# Function to run a container
+# This function does not return a value and takes a container name as a parameter
 @cli.command()
 @click.argument('container')
 def run(container):
@@ -62,18 +62,16 @@ def run(container):
     result = controller.run(container, "./metadata.json")
 
 
-#
-# there will be more here soon
-#
+# Function to display all of the container images that exist
+# This function takes no parameters and does not return a value
 @cli.command()
 def display():
     controller = controller_model.init_controller()
     print("List of containers: " + controller.containers)
 
 
-#
-# there will be more here soon
-#
+# Function to stop a container that is currently running
+# This function takes no parameters and does not return a value
 @cli.command()
 def stop():
     container = click.prompt("What is the name of the container you would like to stop?")
@@ -85,7 +83,7 @@ def stop():
     else:
         print("ERROR: container name not found: " + container.image)
 
-# This command will clear out the cache of containers currently on the machine
+# Function to clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
 @cli.command()
@@ -102,7 +100,8 @@ def guide():
     print("Temporary link to projects github: https://github.com/FossilizedContainers/fossilized-controller")
 
 
-# This function allows the user to upload a container image to a docker repository
+# Function allowing the user to upload a container image to a docker repository
+# This function takes no parameters and does not return a value
 @cli.command()
 def upload():
     # prompting the user for the name of the container as well as the name of the repository
@@ -119,7 +118,8 @@ def upload():
         print("ERROR: container name not found: " + container.image)
 
 
-# This function will pause the container specified
+# Function to pause the container specified
+# This function takes no parameters and does not return a value
 @cli.command()
 def pause():
     # prompting the user for the name of the container to be paused
@@ -137,7 +137,8 @@ def pause():
         print("ERROR: container name not found: " + container.image)
 
 
-# This function will unpause the container specified
+# Function to unpause the container specified
+# This function takes no parameters and does not return a value
 @cli.command()
 def unpause():
     # prompting the user for the name of the container to be unpaused
