@@ -67,7 +67,11 @@ def run(container):
 @cli.command()
 def display():
     controller = controller_model.init_controller()
-    print("List of containers: " + controller.containers)
+    print("List of containers: ")
+    # the containers are in a list
+    for container_name in controller.containers:
+        print(container_name + " ")
+    #print("List of containers: " + controller.containers)
 
 
 # Function to stop a container that is currently running
@@ -155,6 +159,9 @@ def unpause():
     else:
         print("ERROR: container name not found: " + container.image)
 
+# building the package requires a main function
+def main():
+    cli()
 
 if __name__ == '__main__':
     cli()
