@@ -91,12 +91,14 @@ def stop():
 # Function to clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
-# this needs to be changed, docker.prune() isn't valid
+# The formatting of the results needs to be changed
 @cli.command()
 def clean():
-    result = docker.prune()
+    controller = controller_model.init_controller()
+    result = controller.client.containers.prune()
     print("All stopped containers have been deleted!")
-    print("RESULT: " + result)
+    print("RESULT:\n")
+    print(result)
 
 # This function prints the url to our helper page or a clickable link that takes the
 # user to our help page
