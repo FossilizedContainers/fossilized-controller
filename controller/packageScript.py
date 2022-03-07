@@ -64,6 +64,7 @@ def run(container):
 
 # Function to display all of the container images that exist
 # This function takes no parameters and does not return a value
+# This does not properly display containers right now
 @cli.command()
 def display():
     controller = controller_model.init_controller()
@@ -90,6 +91,7 @@ def stop():
 # Function to clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
+# this needs to be changed, docker.prune() isn't valid
 @cli.command()
 def clean():
     result = docker.prune()
@@ -120,6 +122,24 @@ def upload():
         container_object.push(repository)  # need to test functionality more
     else:
         print("ERROR: container name not found: " + container.image)
+
+
+# Function allowing the user to download a container image from a docker repository
+# This function takes no parameters and does not return a value
+@cli.command()
+def download():
+    # prompting the user for the name of the container image
+    name = click.prompt("What image or container would you like to download?")
+
+    controller = controller_model.init_controller()
+
+    # pulls the image from Dockerhub
+    # this makes sure an image actually exists on dockerhub
+    try:
+        controller.client.images.pull(name)
+        print("The image: " + name + " was successfully downloaded")
+    except docker.errors.APIError:
+        print(name + " could not be downloaded")
 
 
 # Function to pause the container specified
