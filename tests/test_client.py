@@ -2,7 +2,7 @@
 import requests
 
 def main():
-    #
+    # Actual client is in the /controller/model.py
     files = {"metadata": open("metadata.json", 'r'),
              "weldeab": open("lipd-files/GeoB9307_3.Weldeab.2014.lpd", 'rb'),
              "net_cdf": open("nc-files/WMI_Lear.nc", 'rb')}

@@ -10,7 +10,7 @@
         "assimilate_selected_seasons": ["annual","summerOnly","winterOnly"]
     },
     "input_files": {
-        "weldeab": "new-files/lipd-files/GeoB9307_3.Weldeab.2014.lpd",
-        "net_cdf": "new-files/nc-files/WMI_Lear.nc"
+        "weldeab": "lipd-files/GeoB9307_3.Weldeab.2014.lpd",
+        "net_cdf": "nc-files/WMI_Lear.nc"
     }
 }
