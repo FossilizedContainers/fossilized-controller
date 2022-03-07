@@ -10,7 +10,12 @@ for ( pkg in required.libraries ) {
 # HTTP Server
 
 # What is called by the adapter's HTTP server to run the model
-register = function (env, lambda) {
+registerModel = function (env, lambda) {
+}
+
+# TODO: Run lambda from registerModel
+runModel = function (env, lambda) {
+  
 }
 
 # TODO: Params in a JSON file;parses the JSON file and converts strings to actual, 
@@ -19,20 +24,23 @@ register = function (env, lambda) {
 # Params are supplied by the model's documentation
 # If config = adapter.getParams: config.get("spread") = relevant value in 
 # metadata.JSON
-getFCParams = function () {
+getFcParams = function () {
 }
 
 # TODO: Run the HTTP server in the container
-runFCServer = function () {
+runFcServer = function () {
   
 }
 
-# TODO: Signals to adapter what files to send back in the HTTP Response message
-FCFilestoSend = function (file.location) {
+# TODO: Signals to adapter what files to send back in the HTTP Response message.
+#
+# Always assumes that you are appending file to list of files to send back as 
+# output.
+setOutFiles = function (file.location) {
   
 }
 
-# TODO: Gets files at FCFilestoSend 
-sendFCFiles = function () {
+# TODO: Gets files at setFcFiles 
+getOutFiles = function () {
   
 }
