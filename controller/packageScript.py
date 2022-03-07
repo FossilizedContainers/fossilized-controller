@@ -64,10 +64,15 @@ def run(container):
 
 # Function to display all of the container images that exist
 # This function takes no parameters and does not return a value
+# This does not properly display containers right now
 @cli.command()
 def display():
     controller = controller_model.init_controller()
-    print("List of containers: " + controller.containers)
+    print("List of containers: ")
+    # the containers are in a list
+    for container_name in controller.containers:
+        print(container_name + " ")
+    #print("List of containers: " + controller.containers)
 
 
 # Function to stop a container that is currently running
@@ -86,11 +91,14 @@ def stop():
 # Function to clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
+# The formatting of the results needs to be changed
 @cli.command()
 def clean():
-    result = docker.prune()
+    controller = controller_model.init_controller()
+    result = controller.client.containers.prune()
     print("All stopped containers have been deleted!")
-    print("RESULT: " + result)
+    print("RESULT:\n")
+    print(result)
 
 # This function prints the url to our helper page or a clickable link that takes the
 # user to our help page
@@ -116,6 +124,24 @@ def upload():
         container_object.push(repository)  # need to test functionality more
     else:
         print("ERROR: container name not found: " + container.image)
+
+
+# Function allowing the user to download a container image from a docker repository
+# This function takes no parameters and does not return a value
+@cli.command()
+def download():
+    # prompting the user for the name of the container image
+    name = click.prompt("What image or container would you like to download?")
+
+    controller = controller_model.init_controller()
+
+    # pulls the image from Dockerhub
+    # this makes sure an image actually exists on dockerhub
+    try:
+        controller.client.images.pull(name)
+        print("The image: " + name + " was successfully downloaded")
+    except docker.errors.APIError:
+        print(name + " could not be downloaded")
 
 
 # Function to pause the container specified
@@ -155,6 +181,9 @@ def unpause():
     else:
         print("ERROR: container name not found: " + container.image)
 
+# building the package requires a main function
+def main():
+    cli()
 
 if __name__ == '__main__':
     cli()
