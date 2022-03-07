@@ -54,12 +54,12 @@ library("httpuv")
 #       content-type 
 #         "multipart/form-data; boundary=344d170547b298b23acea1965702db19" 
 #       host 
-#         "127.0.0.1:23657" 
+#         "127.0.0.1:4000" 
 #       user-agent 
 #         "python-requests/2.26.0"
 
 httpuv.server <- startServer(host = "127.0.0.1", 
-                             port = 23657,
+                             port = 4000,
                              list(
                                call = 
                                  function(req) {
@@ -132,6 +132,8 @@ parse_multipart = function(env){
   if (!grepl('multipart', env$CONTENT_TYPE)) return(NULL)
   
   
+  # File extensions that should be saved in binary
+  binary.file.exts = c(".lpd", ".cdf")
   
   # Some constants regarding boundaries and a buffer environment to read the 
   # data into
