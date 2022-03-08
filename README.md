@@ -6,12 +6,10 @@ This repository contains a command line interface used to help Paleoclimatologis
 ~~~bash
 # command to create a Dockerfile in the current directory
 $ presto create
-~~~
-~~~bash
+
 # command to build an image using the Dockerfile created above
 $ presto build imageName
-~~~
-~~~bash
+
 # command to upload the built image to the docker repository
 $ presto upload
 ~~~
