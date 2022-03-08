@@ -80,8 +80,7 @@ def display():
     print("List of containers: ")
     # the containers are in a list
     for container_name in controller.containers:
-        print(container_name + " ")
-    #print("List of containers: " + controller.containers)
+        print(container_name.image)
 
 
 # Function to stop a container that is currently running
