@@ -105,7 +105,7 @@ def clean():
     controller = controller_model.init_controller()
     result = controller.client.containers.prune()
     print("All stopped containers have been deleted!")
-    print("RESULT:\n")
+    print("RESULT:")
     print(result)
 
 # This function prints the url to our helper page or a clickable link that takes the
