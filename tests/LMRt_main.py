@@ -88,7 +88,8 @@ def lmrt_wrapper(adapter):
     # Here is our param from the get_parameters() function
     job.run(recon_seeds=np.arange(recon_param), verbose=True)
 
-    # Adding every produced recon file
+    # TO DO: Adding every produced recon file
+    #
     # === Adapter work starts here ===
     # calibed_path = os.path.abspath('./recon/calibed_psm.pkl')
     # adapter.set_output_files(calibed_path)
