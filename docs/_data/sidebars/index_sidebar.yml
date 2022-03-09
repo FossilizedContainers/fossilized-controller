@@ -26,6 +26,17 @@ entries:
       url: /index.html
       output: web, pdf
       type: homepage
+  - title: Alpha Demo
+    output: web, pdf
+    folderitems:
+    - title: Use Case 1
+      url: /alpha_uc1.html
+      output: web, pdf
+      type: frontmatter
+    - title: Use Case 2
+      url: /alpha_uc2.html
+      output: web, pdf
+      type: frontmatter
   - title: Docker
     output: web, pdf
     folderitems:
