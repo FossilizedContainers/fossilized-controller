@@ -26,6 +26,7 @@ def fake_model(adapter):
 
     # mark the NetCDF file as an output file
     adapter.set_output_files(net_cdf_path)
+    adapter.set_output_files("lipd-files\\")
 
     return
 

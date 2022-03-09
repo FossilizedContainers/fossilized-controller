@@ -1,6 +1,7 @@
 import click
 import docker
 import model as controller_model
+import os
 
 
 # creating a group using the click library in order to make functions commands
@@ -51,8 +52,16 @@ CMD conda run --no-capture-output -n presto_container {run_command}
 
     print("Dockerfile created!")
 
+# Function to build an image from a Dockerfile
+# This function does not return a value and gets a name for the image as an argument
+@cli.command()
+@click.argument('name')
+def build(name):
+    # creating a call that builds the container
+    os.system('Docker build -t {imageName} .'.format(imageName=name))
+
 # Function to run a container
-# This function does not return a value and takes a container name as a parameter
+# This function does not return a value and gets a container name as an argument
 @cli.command()
 @click.argument('container')
 def run(container):
@@ -71,8 +80,7 @@ def display():
     print("List of containers: ")
     # the containers are in a list
     for container_name in controller.containers:
-        print(container_name + " ")
-    #print("List of containers: " + controller.containers)
+        print(container_name.image)
 
 
 # Function to stop a container that is currently running
@@ -97,7 +105,7 @@ def clean():
     controller = controller_model.init_controller()
     result = controller.client.containers.prune()
     print("All stopped containers have been deleted!")
-    print("RESULT:\n")
+    print("RESULT:")
     print(result)
 
 # This function prints the url to our helper page or a clickable link that takes the
@@ -113,17 +121,10 @@ def guide():
 @cli.command()
 def upload():
     # prompting the user for the name of the container as well as the name of the repository
-    container = click.prompt("What container or image would you like to upload? ")
-    repository = click.prompt("What is the name of the repository you wish to upload to?")
+    repository = click.prompt("What is the name of the repository you wish to upload to? (NOTE: it should have the same name as your container)")
 
-    controller = controller_model.init_controller()
-    container = controller.get_container(container)
-    # checking that the container is running and exists before uploading
-    if not isinstance(container.container, type(None)):
-        container_object = (controller.get_container(container)).container
-        container_object.push(repository)  # need to test functionality more
-    else:
-        print("ERROR: container name not found: " + container.image)
+    # creating a system call to upload the image to the repository
+    os.system('docker image push {repositoryName}'.format(repositoryName=repository))
 
 
 # Function allowing the user to download a container image from a docker repository
@@ -186,4 +187,4 @@ def main():
     cli()
 
 if __name__ == '__main__':
-    cli()
+    main()

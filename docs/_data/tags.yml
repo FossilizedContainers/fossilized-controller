@@ -16,4 +16,6 @@ allowed-tags:
   - docker
   - documentation
   - guide
+  - demo
+  - use_case
 # Copyright 2021 Google LLC
