@@ -5,6 +5,9 @@ import docker
 import requests
 from os.path import expanduser
 
+# delete later
+import time
+
 
 # Class for information about a container
 class ContainerInfo:
@@ -16,25 +19,34 @@ class ContainerInfo:
         self.container = None
 
     def start(self, controller, run_metadata_file: str):
-        # None in the ports dict assigns it to a random host port
-        self.container = controller.client.containers.run(self.image, detach=True, ports={self.port: None})
+        #checks if the container already exists before running it
+        self.container = controller.client.containers.run(self.image, detach=True, network="host")
         self.container.reload()
         # get the randomly assigned port
-        self.container_port = list(self.container.ports.values())[0][0]['HostPort']
+        #self.container_port = list(self.container.ports.values())[0][0]['HostPort']
+        # This is the same port that the adapter sets for the server
+        self.container_port=4000
 
-        run_metadata = json.load(open(run_metadata_file))
+        # parsing json file and indicating every file that needs to be sent
+        run_metadata = open('metadata.json')
 
         files = {
-            "metadata.json": open(run_metadata_file, 'rb')
+            "metadata": open(run_metadata_file, 'rb')
         }
-        for file_input in run_metadata['inputs']:
-            typ = run_metadata['inputs'][file_input]['type']
-            location = run_metadata['inputs'][file_input]['location']
-            # add the external files listed in the run metadata to the post request
+
+        metadata_read = json.loads(run_metadata.read())
+        inputs_dict = metadata_read['inputs']
+
+        for file_input in inputs_dict:
+            location = inputs_dict[file_input]
             files[str(file_input)] = open(location, 'rb')
 
         print(self.container.attrs['State'])
-        results = requests.post("http://{}:{}/start".format(self.address, self.container_port), files=files)
+
+        # I needed to add this because the server takes a bit to start up
+        # TODO: add a way to wait to send the post until we detect the server is up
+        time.sleep(10)
+        results = requests.post("http://{}:{}".format(self.address, self.container_port), files=files)
         return results
 
 
