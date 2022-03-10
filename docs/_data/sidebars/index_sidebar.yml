@@ -20,32 +20,39 @@ entries:
       type: frontmatter
 
   - title: Overview
-    output: web, pdf
+    output: web
     folderitems:
-    - title: Get started
+    - title: Getting started
       url: /index.html
-      output: web, pdf
+      output: web
       type: homepage
   - title: Alpha Demo
-    output: web, pdf
+    output: web
     folderitems:
     - title: Use Case 1
       url: /alpha_uc1.html
-      output: web, pdf
+      output: web
       type: frontmatter
     - title: Use Case 2
       url: /alpha_uc2.html
-      output: web, pdf
+      output: web
       type: frontmatter
   - title: Docker
-    output: web, pdf
+    output: web
     folderitems:
     - title: Basics
       url: /docker.html
-      output: web, pdf
+      output: web
       type: frontmatter
+  - title: Formatting Code
+    output: web
+    folderitems:
+        - title: Overview
+          url: /formatting_overview.html
+          output: web
+          type: frontmatter
   - title: Documentation
-    output: web, pdf
+    output: web
     folderitems:
     - title: Management
       url: /managing_docs.html

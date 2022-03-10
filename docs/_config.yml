@@ -73,7 +73,7 @@ defaults:
       comments: false
       # if you don't want to use Commento.io and just hide comments, change true to false wherever you see the comments property
       search: true
-      sidebar: home_sidebar
+      sidebar: index_sidebar
       topnav: topnav
   -
     scope:
@@ -99,11 +99,7 @@ defaults:
 # these are defaults used for the frontmatter for these file types
 
 sidebars:
-- home_sidebar
 - index_sidebar
-- mydoc_sidebar
-- product1_sidebar
-- other
 
 description: "Documentation for the Fossilized Controller"
 # the description is used in the feed.xml file
