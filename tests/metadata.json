@@ -9,8 +9,14 @@
         "models_for_prior": ["trace_regrid"],
         "assimilate_selected_seasons": ["annual","summerOnly","winterOnly"]
     },
-    "input_files": {
-        "weldeab": "lipd-files/GeoB9307_3.Weldeab.2014.lpd",
-        "net_cdf": "nc-files/WMI_Lear.nc"
+    "inputs": {
+        "weldeab": {
+            "type": "local",
+            "location": "lipd-files/GeoB9307_3.Weldeab.2014.lpd"
+        },
+        "net_cdf": {
+            "type": "local",
+            "location": "nc-files/WMI_Lear.nc"
+    }
     }
 }

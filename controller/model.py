@@ -3,6 +3,7 @@ import pickle
 import os
 import docker
 import requests
+import time
 from os.path import expanduser
 
 
@@ -23,7 +24,6 @@ class ContainerInfo:
         self.container_port = list(self.container.ports.values())[0][0]['HostPort']
 
         run_metadata = json.load(open(run_metadata_file))
-
         files = {
             "metadata.json": open(run_metadata_file, 'rb')
         }
@@ -34,6 +34,7 @@ class ContainerInfo:
             files[str(file_input)] = open(location, 'rb')
 
         print(self.container.attrs['State'])
+        time.sleep(5)
         results = requests.post("http://{}:{}/start".format(self.address, self.container_port), files=files)
         return results
 
