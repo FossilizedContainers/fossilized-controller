@@ -81,7 +81,7 @@ def lmrt_wrapper(adapter):
 
     # Adding the produceed netcdf file
     # === Adapter work starts here ===
-    nc_path = os.path.abspath('./recon/job_r00_recon.nc')
+    nc_path = os.path.abspath('recon/')
     adapter.set_output_files(nc_path)
     # == Adapter work ends here ===
 

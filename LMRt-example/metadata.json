@@ -1,7 +1,7 @@
 {
     "parameters": {
         "recon_iterations": 1,
-        "figure_type": "map",
+        "figure_type": "graph",
         "job_dirpath": "./recon"
     },
     "inputs": {

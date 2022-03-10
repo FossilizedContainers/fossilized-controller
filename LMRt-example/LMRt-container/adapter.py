@@ -31,6 +31,8 @@ class Adapter:
         self.inputs = None
         self.output_files = []
 
+        self.initial_working_dir = None
+
     def start_server(self):
         self.server.run(host='0.0.0.0', port=4000, debug=True)
 
@@ -55,9 +57,11 @@ class Adapter:
     def get_output_files(self):
         return self.output_files
 
-    # TODO: str_location points to a directory
-    def set_output_files(self, str_location):
-        temp_path = os.path.abspath(str_location)
+    # TODO: check if directory or file exists
+    # TODO: location points to a directory
+    def set_output_files(self, location):
+        temp_path = os.path.abspath(location)
+        self.reset_wd()
 
         if self.output_files:
             for i in self.output_files:
@@ -65,6 +69,9 @@ class Adapter:
                     return
 
         self.output_files.append(temp_path)
+
+    def reset_wd(self):
+        os.chdir(self.initial_working_dir)
 
     # function to read the lipd files and store them in variables
     # Main Steps of Function:
@@ -101,7 +108,7 @@ class Adapter:
         #                  current working directory, DO NOT ADD A FORWARD OR BACK SLASH the the beginning of value /
         #                  file location. An example of this is:
         #                           "/WMI_Lear.nc"
-        initial_working_dir = os.getcwd()
+        global_adapter.initial_working_dir = os.getcwd()
         for file in request.files:
             if file != "metadata":
                 # to preserve the subdirectories from the metadata.JSON, uses the "name" argument from the POST request
@@ -125,23 +132,31 @@ class Adapter:
                         return "File: " + file + " did not pass the readLipd", 500
 
             # saving a file changes the cwd and produces unintended behavior if not reset to its initial value
-            os.chdir(initial_working_dir)
+            global_adapter.reset_wd()
 
         # run the reconstruction
         global_adapter.reconstruction(global_adapter)
         # any reading done in the reconstruction will change the cwd and while there are no plans for multiple pings to
-        # the adapter, if the server is pinged mutliple times, the file structure produces unintended behavior
-        os.chdir(initial_working_dir)
+        # the adapter, if the server is pinged multiple times, the file structure produces unintended behavior
+        global_adapter.reset_wd()
 
         # send output files in HTTP Response message
         zip_handler = zipfile.ZipFile('response_data.zip', 'w', zipfile.ZIP_DEFLATED)
 
-        for file in global_adapter.output_files:
-            zip_handler.write(file, arcname=os.path.relpath(file))
+        for location in global_adapter.output_files:
+            if os.path.isfile(location):
+                zip_handler.write(location, arcname=os.path.relpath(location))
+            else:
+                for root, dirs, files in os.walk(location, topdown=False):
+                    for file in files:
+                        temp_zip_location = \
+                            os.path.relpath(os.path.join(root, file), start=global_adapter.initial_working_dir)
+                        zip_handler.write(os.path.join(root, file), arcname=temp_zip_location)
+
 
         zip_handler.close()
 
-        return send_from_directory(initial_working_dir, "response_data.zip")
+        return send_from_directory(global_adapter.initial_working_dir, "response_data.zip")
 
 
 # create global adapter instance
