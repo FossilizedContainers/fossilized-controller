@@ -70,6 +70,11 @@ def run(container):
     print("Running the container...")
     result = controller.run(container, "./metadata.json")
 
+    response_file = open('response_data.zip', 'wb')
+    response_file.write(result.content)
+    response_file.close()
+    print("Output files successfully saved at ./response_data.zip")
+
 
 # Function to display all of the container images that exist
 # This function takes no parameters and does not return a value
@@ -79,22 +84,26 @@ def display():
     controller = controller_model.init_controller()
     print("List of containers: ")
     # the containers are in a list
-    for container_name in controller.containers:
-        print(container_name.image)
+    for container in controller.client.containers.list():
+        print('Container Name:{}       Container Image:{}'.format(container.attrs['Name'],
+                                                                  container.image.tags))
 
 
 # Function to stop a container that is currently running
 # This function takes no parameters and does not return a value
 @cli.command()
-def stop():
-    container = click.prompt("What is the name of the container you would like to stop?")
+@click.argument('container_name')
+def stop(container_name):
+    # container_name = click.prompt("What is the name of the container you would like to stop?")
     controller = controller_model.init_controller()
-    container = controller.get_container(container)
-    # checking that the container is running and exists before stopping
-    if not isinstance(container.container, type(None)):
-        container.container.stop()
+
+    try:
+        container = controller.client.containers.get(container_name)
+    except docker.errors.NotFound as exc:
+        print("ERROR; container name not found: " + container_name)
     else:
-        print("ERROR: container name not found: " + container.image)
+        container.stop()
+        print("The container was successfully stopped")
 
 # Function to clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the

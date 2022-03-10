@@ -10,14 +10,15 @@ def main():
     }
 
     metadata_read = json.loads(run_metadata.read())
-    inputs_dict = metadata_read['input_files']
+    inputs_dict = metadata_read['inputs']
 
     for file_input in inputs_dict:
         location = inputs_dict[file_input]
         files[str(file_input)] = open(location, 'rb')
         #print(location)
 
-    response = requests.post('http://172.17.0.2:4000', files=files)
+    response = requests.post('http://0.0.0.0:4000', files=files)
+    #response = requests.post('http://172.17.0.2:4000', files=files)
 
     response_file = open('new_response_data.zip', 'wb')
     response_file.write(response.content)
