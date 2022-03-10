@@ -1,0 +1,10 @@
+{
+    "parameters": {
+        "recon_iterations": 1,
+        "figure_type": "map",
+        "job_dirpath": "./recon"
+    },
+    "input_files": {
+        "configs": "configs.yml"
+    }
+}

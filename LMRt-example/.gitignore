@@ -1,0 +1,8 @@
+# no data
+LMRt-container/data/
+
+old/
+Dockerfile
+__pycache__
+datalocations.txt
+*.zip
