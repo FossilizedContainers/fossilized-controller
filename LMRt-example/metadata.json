@@ -4,7 +4,7 @@
         "figure_type": "map",
         "job_dirpath": "./recon"
     },
-    "input_files": {
+    "inputs": {
         "configs": "configs.yml"
     }
 }
