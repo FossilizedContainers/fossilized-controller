@@ -1,6 +1,6 @@
 ---
 title: "Formatting Code for Fossilized Controller"
-nav_order: 6
+nav_order: 71
 keywords: format
 tags: [guide]
 sidebar: index_sidebar

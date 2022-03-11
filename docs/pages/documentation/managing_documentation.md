@@ -1,6 +1,6 @@
 ---
 title: "Managing the Documentation"
-nav_order: 3
+nav_order: 31
 keywords: docker
 tags: [documentation, basics]
 sidebar: index_sidebar
@@ -58,5 +58,22 @@ https://idratherbewriting.com/documentation-theme-jekyll/index.html
 
 ### Clean Up
 
-* Delete unused tags, i.e. from tags.yml and tag_?.md files
-* Delete unused content
+* Uncaught Error: SimpleJekyllSearch --- failed to get JSON (search.json)
+    throwError http://localhost:4000/js/jekyll-search.js:1
+    initWithURL http://localhost:4000/js/jekyll-search.js:1
+    onreadystatechange http://localhost:4000/js/jekyll-search.js:1
+    handleResponse http://localhost:4000/js/jekyll-search.js:1
+    load http://localhost:4000/js/jekyll-search.js:1
+    initWithURL http://localhost:4000/js/jekyll-search.js:1
+    init http://localhost:4000/js/jekyll-search.js:1
+    <anonymous> http://localhost:4000/alpha_uc1.html#:152
+jekyll-search.js:1:3787
+    throwError http://localhost:4000/js/jekyll-search.js:1
+    initWithURL http://localhost:4000/js/jekyll-search.js:1
+    onreadystatechange http://localhost:4000/js/jekyll-search.js:1
+    (Async: EventHandlerNonNull)
+    handleResponse http://localhost:4000/js/jekyll-search.js:1
+    load http://localhost:4000/js/jekyll-search.js:1
+    initWithURL http://localhost:4000/js/jekyll-search.js:1
+    init http://localhost:4000/js/jekyll-search.js:1
+    <anonymous> http://localhost:4000/alpha_uc1.html#:152

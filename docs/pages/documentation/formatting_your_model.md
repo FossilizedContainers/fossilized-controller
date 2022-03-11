@@ -1,6 +1,6 @@
 ---
 title: "Formatting Your Model for PReSto"
-nav_order: 4
+nav_order: 32
 keywords: formatting
 tags: [documentation, guide]
 sidebar: index_sidebar
