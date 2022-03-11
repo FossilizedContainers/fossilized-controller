@@ -69,6 +69,10 @@ After this you are ready to start creating your container
 
 ### 3. Call presto create
 Stay in the folder your reconstruction is in and call `presto create` and answer the prompted questions
+```
+presto create
+```
+
 ```console
 alpha@demo:~/.../LMRt-container$ presto create
 What is the command to run your main file?
@@ -108,10 +112,13 @@ CMD conda run --no-capture-output -n presto_container python3 main.py
 
 ### 4. Build the image
 More information about what images are can be found [here](). Images are essentially what your container uses to run so they need to be built first. Run `presto build <name of your container>` to start building the image. This process can take a while. You should get a message when the image is done building
+```
+presto build alpha-demo
+```
 ```console
-LMRt-container$ presto build demo
+LMRt-container$ presto build alpha-demo
 Building the image.... This might take a while
-demo has been successfully built
+alpha-demo has been successfully built
 ```
 
 ### 5. Uploading an image to Dockerhub
@@ -128,7 +135,7 @@ alpha@demo:~/.../alpha-demo$ cd client
 #### 6.2 Make sure you have the files you want to send to the container
 In the case for our model, we only are sending the `configs.yml` file
 ```console
-emily@VM:~/.../client$ ls
+alpha@demo:~/.../client$ ls
 configs.yml
 ```
 
@@ -157,16 +164,18 @@ For the inputs, we are only sending our `config.yml` file found [here](https://g
 
 Your directory should now look like
 ```console
-emily@VM:~/.../client$ ls
+alpha@demo:~/.../client$ ls
 configs.yml  metadata.json
 ```
 ### 7. Run the model
 We are now ready to run our container using our `presto run <image name>` command. After the model finishes you should receive a zip file `` that has the output files from the model.
 
 In a seperate terminal you can run `docker logs --follow $(docker ps -q)` after you run the below command to follow what is happening inside of the container in real time.
-
+```
+presto run alpha-demo
+```
 ```console
-emily@VM:~/.../client$ presto run lmrt-demo
+alpha@demo:~/.../client$ presto run alpha-demo
 Running the container...
 {'Status': 'running', 'Running': True, 'Paused': False, 'Restarting': False, 'OOMKilled': False, 'Dead': False, 'Pid': 86211, 'ExitCode': 0, 'Error': '', 'StartedAt': '2022-03-11T00:58:10.323020527Z', 'FinishedAt': '0001-01-01T00:00:00Z'}
 Output files successfully saved at ./response_data.zip
@@ -178,20 +187,20 @@ When you check your files you should see a new zip archive `response_data.zip`. 
 ### 9. Clean up the container
 Run `presto display` to get the name of your container
 ```console
-emily@VM:~/.../client$ presto display
+alpha@demo:~/.../client$ presto display
 List of containers:
-Container Name:/interesting_tereshkova       Container Image:['lmrt-demo:latest']
+Container Name:/interesting_tereshkova       Container Image:['alpha-demo:latest']
 ```
 
 Copy the name (without the `/`) and run `presto stop`
 ```console
-emily@VM:~/.../client$ presto stop interesting_tereshkova
+alpha@demo:~/.../client$ presto stop interesting_tereshkova
 The container was successfully stopped
 ```
 
 Now clean up any stopped container using `presto clean`
 ```console
-emily@VM:~/.../client$ presto clean
+alpha@demo:~/.../client$ presto clean
 All stopped containers have been deleted!
 RESULT:
 {'ContainersDeleted': ['a81ccead7aca5be0b961a69a9154c0d748ddf228808136e9a89d3f951ba8fac2', 'aaa7cf38c9142af216a5bb39f50fa9398e65df1f96e6a96b25d92121d3195cbf', 'efb7f7cdc63371c71fe967f60821b3353705e0535dc1aaf07a8b76e4a3ea6bd6', '6161f111c4509aa6eaf63d1b814b28690b7e7c9cd0ee24b227c975c6c4920f5a', '57aa0c510fb93583f1436845c00ccaffe57d2889db095dc48a9a069b04379818', '7b4dbfea4f7ce5d0218884e50b32123e4a1b75fbbcae4604e453ffdc8565701d'], 'SpaceReclaimed': 3122163131}
