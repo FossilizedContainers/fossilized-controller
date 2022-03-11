@@ -58,7 +58,11 @@ CMD conda run --no-capture-output -n presto_container {run_command}
 @click.argument('name')
 def build(name):
     # creating a call that builds the container
-    os.system('Docker build -t {imageName} .'.format(imageName=name))
+    controller = controller_model.init_controller()
+    print("Building the image.... This might take a while")
+    controller.client.images.build(path=".", tag=name, quiet='false')
+    print("{} has been successfully built".format(name))
+    # os.system('Docker build -t {imageName} .'.format(imageName=name))
 
 # Function to run a container
 # This function does not return a value and gets a container name as an argument
