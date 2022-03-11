@@ -220,7 +220,7 @@ presto run alpha-demo
 ```
 
 ```bash
-alpha@demo:~/.../client$ presto run alpha-demo
+alpha@demo:~/.../client$ presto run demo
 Running the container...
 {'Status': 'running', 'Running': True, 'Paused': False, 'Restarting': False, 'OOMKilled': False, 'Dead': False,
 'Pid': 86211, 'ExitCode': 0, 'Error': '', 'StartedAt': '2022-03-11T00:58:10.323020527Z', 'FinishedAt': '0001-01-01T00:00:00Z'}
