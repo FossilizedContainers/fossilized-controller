@@ -60,9 +60,7 @@ def build(name):
     # creating a call that builds the container
     controller = controller_model.init_controller()
     print("Building the image.... This might take a while")
-    controller.client.images.build(path=".", tag=name, quiet='false')
-    print("{} has been successfully built".format(name))
-    # os.system('Docker build -t {imageName} .'.format(imageName=name))
+    os.system('Docker build -t {imageName} .'.format(imageName=name))
 
 # Function to run a container
 # This function does not return a value and gets a container name as an argument
@@ -118,8 +116,7 @@ def clean():
     controller = controller_model.init_controller()
     result = controller.client.containers.prune()
     print("All stopped containers have been deleted!")
-    print("RESULT:")
-    print(result)
+    print("Space recovered: " + result[-1] + "MB")
 
 # This function prints the url to our helper page or a clickable link that takes the
 # user to our help page
