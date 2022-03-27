@@ -128,6 +128,7 @@ def clean():
     try:
         result = controller.client.containers.prune()
         print("All stopped containers have been deleted!")
+        print("Containers deleted: " + str(result['ContainersDeleted']))
         print("Space recovered: " + str(result["SpaceReclaimed"]) + "MB")
     except docker.errors.APIError:
         print("ERROR: Issue connecting to the Docker API")
@@ -137,7 +138,8 @@ def clean():
 @cli.command()
 def guide():
     # printing the URL to our help page
-    print("Temporary link to projects github: https://github.com/FossilizedContainers/fossilized-controller")
+    print("Click the following link for a guide on how to use the tool!")
+    print("https://fossilizedcontainers.github.io/fossilized-controller/")
 
 
 # Function allowing the user to upload a container image to a docker repository
