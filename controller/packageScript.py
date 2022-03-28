@@ -12,7 +12,7 @@ def cli():
 # Function to create a docker file
 # This function takes no parameters and does not return a value
 @cli.command()
-@click.option("--run", default=None)
+@click.option("-r", "--run", "run_command", default=None)
 def create(run_command):
     # creating a docker file to create the image
     docker_file = open("./Dockerfile", "w")
