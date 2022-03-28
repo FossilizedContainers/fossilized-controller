@@ -61,7 +61,7 @@ def build(name):
     # creating a call that builds the container
     controller = controller_model.init_controller()
     print("Building the image.... This might take a while")
-    os.system('Docker build -t {imageName} .'.format(imageName=name))
+    os.system('docker build -t {imageName} .'.format(imageName=name))
 
 # Function to run a container
 # This function does not return a value and gets a container name as an argument

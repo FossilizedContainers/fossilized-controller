@@ -19,3 +19,11 @@ jobs:
         with:
           r-version: release
           use-public-rspm: true
+
+      - name: Build the test climate model
+        working-directory: ./tests/
+        run: python3 ../controller/packageScript.py build ci/test-model
+
+      - name: Run the test climate model
+        working-directory: ./tests/
+        run: python3 ../controller/packageScript.py run ci/test-model
