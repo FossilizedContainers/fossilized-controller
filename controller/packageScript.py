@@ -54,30 +54,38 @@ CMD conda run --no-capture-output -n presto_container {run_command}
 
 # Function to build an image from a Dockerfile
 # This function does not return a value and gets a name for the image as an argument
+# TO DO: update this to make it display the build process
 @cli.command()
 @click.argument('name')
 def build(name):
     # creating a call that builds the container
     controller = controller_model.init_controller()
     print("Building the image.... This might take a while")
-    controller.client.images.build(path=".", tag=name, quiet='false')
-    print("{} has been successfully built".format(name))
-    # os.system('Docker build -t {imageName} .'.format(imageName=name))
+    os.system('Docker build -t {imageName} .'.format(imageName=name))
 
 # Function to run a container
 # This function does not return a value and gets a container name as an argument
 @cli.command()
-@click.argument('container')
-def run(container):
+@click.argument('name')
+def run(name):
     controller = controller_model.init_controller()
-    container = controller.get_container(container)
+    container = controller.get_container(name)
     print("Running the container...")
-    result = controller.run(container, "./metadata.json")
 
-    response_file = open('response_data.zip', 'wb')
-    response_file.write(result.content)
-    response_file.close()
-    print("Output files successfully saved at ./response_data.zip")
+    try:
+        result = controller.run(container, "./metadata.json")
+
+        response_file = open('response_data.zip', 'wb')
+        response_file.write(result.content)
+        response_file.close()
+        print("Output files successfully saved at ./response_data.zip")
+
+    except docker.errors.ContainerError:
+        print("ERROR: Container can not run")
+    except docker.errors.ImageNotFound:
+        print("ERROR: The container {} was not found".format(name))
+    except docker.errors.APIError:
+        print("ERROR: Issue connecting to the Docker API")
 
 
 # Function to display all of the container images that exist
@@ -104,7 +112,7 @@ def stop(container_name):
     try:
         container = controller.client.containers.get(container_name)
     except docker.errors.NotFound as exc:
-        print("ERROR; container name not found: " + container_name)
+        print("ERROR: container name not found: " + container_name)
     else:
         container.stop()
         print("The container was successfully stopped")
@@ -116,46 +124,61 @@ def stop(container_name):
 @cli.command()
 def clean():
     controller = controller_model.init_controller()
-    result = controller.client.containers.prune()
-    print("All stopped containers have been deleted!")
-    print("RESULT:")
-    print(result)
+
+    try:
+        result = controller.client.containers.prune()
+        print("All stopped containers have been deleted!")
+        print("Containers deleted: " + str(result['ContainersDeleted']))
+        print("Space recovered: " + str(result["SpaceReclaimed"]) + "MB")
+    except docker.errors.APIError:
+        print("ERROR: Issue connecting to the Docker API")
 
 # This function prints the url to our helper page or a clickable link that takes the
 # user to our help page
 @cli.command()
 def guide():
     # printing the URL to our help page
-    print("Temporary link to projects github: https://github.com/FossilizedContainers/fossilized-controller")
+    print("Click the following link for a guide on how to use the tool!")
+    print("https://fossilizedcontainers.github.io/fossilized-controller/")
 
 
 # Function allowing the user to upload a container image to a docker repository
 # This function takes no parameters and does not return a value
+# TO DO: Look into low level API for live logs
 @cli.command()
-def upload():
+@click.argument('name')
+def upload(name):
     # prompting the user for the name of the container as well as the name of the repository
-    repository = click.prompt("What is the name of the repository you wish to upload to? (NOTE: it should have the same name as your container)")
+    #repository = click.prompt("What is the name of the repository you wish to upload to? (NOTE: it should have the same name as your container)")
+    controller = controller_model.init_controller()
 
+    try:
+        result = controller.client.images.push(name)
+
+        if "errorDetail" in result:
+            print("There was an error uploading the image")
+        else:
+            print("The image: {} was successfully uploaded".format(name))
+    except docker.errors.APIError:
+        print("ERROR: {} could not be uploaded".format(name))
     # creating a system call to upload the image to the repository
-    os.system('docker image push {repositoryName}'.format(repositoryName=repository))
+    #os.system('docker image push {repositoryName}'.format(repositoryName=name))
 
 
 # Function allowing the user to download a container image from a docker repository
 # This function takes no parameters and does not return a value
+# TO DO: Look into low level API for live logs
 @cli.command()
-def download():
-    # prompting the user for the name of the container image
-    name = click.prompt("What image or container would you like to download?")
-
+@click.argument('name')
+def download(name):
     controller = controller_model.init_controller()
-
     # pulls the image from Dockerhub
     # this makes sure an image actually exists on dockerhub
     try:
         controller.client.images.pull(name)
-        print("The image: " + name + " was successfully downloaded")
+        print("The image: {} was successfully downloaded".format(name))
     except docker.errors.APIError:
-        print(name + " could not be downloaded")
+        print("ERROR: {} could not be downloaded".format(name))
 
 
 # Function to pause the container specified
