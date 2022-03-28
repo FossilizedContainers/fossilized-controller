@@ -23,6 +23,10 @@ jobs:
       - name: Install dependencies
         run: pip install click requests docker
 
+      - name: Create a Dockerfile for the test model
+        working-directory: ./tests/
+        run: python3 ../controller/packageScript.py create --run python ./bogus_python_model.py
+
       - name: Build the test climate model
         working-directory: ./tests/
         run: python3 ../controller/packageScript.py build ci/test-model

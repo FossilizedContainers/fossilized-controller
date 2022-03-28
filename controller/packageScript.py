@@ -12,19 +12,21 @@ def cli():
 # Function to create a docker file
 # This function takes no parameters and does not return a value
 @cli.command()
-def create():
+@click.option("--run", default=None)
+def create(run_command):
     # creating a docker file to create the image
     docker_file = open("./Dockerfile", "w")
 
-    # prompting the user for the command to run the main file
-    print("""What is the command to run your main file?
+    if run_command is None:
+        # prompting the user for the command to run the main file
+        print("""What is the command to run your main file?
 Here are some examples:
 - python3 main.py
 - r main.R
 - sh main.sh
-""")
+    """)
 
-    run_command = click.prompt("> ")
+        run_command = click.prompt("> ")
 
     file_contents = """FROM continuumio/anaconda3
 
