@@ -77,6 +77,7 @@ class Controller:
     def get_container(self, image: str):
         c = self.__find_container(image)
         if c is None:
+
             c = ContainerInfo(image)
             self.containers.append(c)
             self.save()
@@ -98,3 +99,8 @@ def init_controller() -> Controller:
     if __controller is None:
         __controller = Controller(__cache_file)
     return __controller
+
+def delete_controller():
+    # delete the controller
+    global __controller
+    __controller = None
