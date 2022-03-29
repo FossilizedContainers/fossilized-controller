@@ -8,7 +8,6 @@ permalink: alpha_uc1.html
 summary: A page on the first use case of the Alpha Demo
 ---
 
-
 For our first Alpha Demo use case, we will focus on container creation. This
 shows how a scientist would take their model and containerize it for others to
 access.
@@ -21,6 +20,9 @@ alpha@demo:~/.../alpha-demo$ cd LMRt-container/
 alpha@demo:~/.../LMRt-container$ ls
 data  main.py
 ```
+The data was downloaded from the following [link](https://drive.google.com/drive/folders/1VINQ33t9T7GW8gqn9g0q9uvSNXYOlCLN)
+
+The unmodified main file can be found here
 
 ### 2. Modify the reconstruction to make it 'presto ready'
 
