@@ -2,6 +2,9 @@ from click.testing import CliRunner
 from packageScript import *
 import docker
 import unittest
+import model as controller_model
+import tempfile
+
 
 class TestPackageMethods(unittest.TestCase):
 
@@ -39,22 +42,27 @@ CMD conda run --no-capture-output -n presto_container python unitTest.py
         # check that prune deleted all of the containers
         self.assertEqual(client.containers.list(), [])
 
+
 class TestContainerManager(unittest.TestCase):
 
     def test_containerManager(self):
+        cacheFile = tempfile.NamedTemporaryFile()
+        cacheFile.close()
         # make the controller
-        controller = controller_model.init_controller()
+        controller = controller_model.init_controller(cacheFile.name)
         # call get container several times
-        index = 1
-        while( index < 6 ):
-            controller.get_container('unitTest - get_container: ' + str(index))
+        num = 10
+        index = 0
+        while( index < num ):
+            controller.get_container(f'unitTest - get_container:  {index}')
             index += 1
         # delete the controller
         controller_model.delete_controller()
         # create a new controller and check that the container is cached
-        controller = controller_model.init_controller()
-        # check the cache
-        self.assertIsNotNone(controller.cache_file)
+        controller = controller_model.init_controller(cacheFile.name)
+        # need container info object
+        self.assertEqual(len(controller.containers), num)
+
 
 # Unit testing for adapter library
 class TestAdapterLibrary(unittest.TestCase):
@@ -65,8 +73,9 @@ class TestAdapterLibrary(unittest.TestCase):
     def test_handle_post(self):
         pass
 
-    def test_output_recieved(self):
+    def test_output_received(self):
         pass
+
 
 if __name__ == '__main__':
     unittest.main()
