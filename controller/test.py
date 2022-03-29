@@ -1,61 +1,72 @@
-import sys
 from click.testing import CliRunner
 from packageScript import *
-sys.path.insert(0, 'C:/Users/Golde/PycharmProjects/fossilized-controller/python-adapter')
-import adapter
-adapter = adapter.global_adapter
+import docker
+import unittest
 
-# Unit testing for packageScript.py
+class TestPackageMethods(unittest.TestCase):
 
-# create
-def test_create():
-    runner = CliRunner()
-    result = runner.invoke(create, input='python unitTest.py')
-    with open('DockerFile', 'r') as i:
-        print(i.read())
+    def test_create(self):
+        runner = CliRunner()
+        result = runner.invoke(create, input='python unitTest.py')
+        expectedResult = '''FROM continuumio/anaconda3
 
-# display
-def test_display():
-    runner = CliRunner()
-    result = runner.invoke(display)
-    print(result.output)
+RUN conda update -n base -c defaults conda
 
-# clean
-def test_clean():
-    runner = CliRunner()
-    cleanResult = runner.invoke(clean)
-    displayResult = runner.invoke(display)
-    print(cleanResult.output)
-    print(displayResult.output)
+# setup conda environment
+COPY presto_environment.yml .
+RUN conda env create -f presto_environment.yml
+RUN echo "conda activate presto_container" >> ~/.bashrc
+SHELL ["/bin/bash", "--login", "-c"]
+RUN conda activate presto_container
 
+# copy all files to the root directory of the container
+COPY . /
 
-# Unit testing for model.py
-def test_containerManager():
-    # make the controller
-    controller = controller_model.init_controller()
-    # call get container several times
+# run the command in the context of the environment we made
+CMD conda run --no-capture-output -n presto_container python unitTest.py
+'''
+        # read file to a string and then compare
+        receivedResult = ""
+        file = open('Dockerfile', 'r')
+        receivedResult = file.read()
+        self.assertEqual(expectedResult, receivedResult)
 
-    # check that get container is creating an object and caching it
+    # clean
+    def test_clean(self):
+        client = docker.from_env()
+        runner = CliRunner()
+        cleanResult = runner.invoke(clean)
+        # check that prune deleted all of the containers
+        self.assertEqual(client.containers.list(), [])
 
+class TestContainerManager(unittest.TestCase):
 
-# Unit testing for adapter.py
-def test_adapter():
-    # start the flask server
-    print(adapter.start_server())
-    # send files to the server
+    def test_containerManager(self):
+        # make the controller
+        controller = controller_model.init_controller()
+        # call get container several times
+        index = 1
+        while( index < 6 ):
+            controller.get_container('unitTest - get_container: ' + str(index))
+            index += 1
+        # delete the controller
+        controller_model.delete_controller()
+        # create a new controller and check that the container is cached
+        controller = controller_model.init_controller()
+        # check the cache
+        self.assertIsNotNone(controller.cache_file)
 
-    # receive some files
+# Unit testing for adapter library
+class TestAdapterLibrary(unittest.TestCase):
 
-    # check the data was recieved as a zip file
+    def test_start_server(self):
+        pass
 
+    def test_handle_post(self):
+        pass
 
-# Unit testing for r adapter
-
-def main():
-    test_create()
-    test_display()
-    test_clean()
-    test_adapter()
+    def test_output_recieved(self):
+        pass
 
 if __name__ == '__main__':
-    main()
+    unittest.main()
