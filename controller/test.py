@@ -1,3 +1,6 @@
+import os
+import sys
+import requests
 from click.testing import CliRunner
 from packageScript import *
 import docker
@@ -5,9 +8,18 @@ import unittest
 import model as controller_model
 import tempfile
 
+tests_dir = os.path.dirname(os.path.realpath(__file__))
+fc_dir = os.path.dirname(tests_dir)
+python_adapter_dir = os.path.join(fc_dir, "python-adapter")
+sys.path.append(python_adapter_dir)
+
+import adapter
+
+adapter = adapter.global_adapter
+
 
 class TestPackageMethods(unittest.TestCase):
-
+    @unittest.skip('not useful')
     def test_create(self):
         runner = CliRunner()
         result = runner.invoke(create, input='python unitTest.py')
@@ -35,6 +47,7 @@ CMD conda run --no-capture-output -n presto_container python unitTest.py
         self.assertEqual(expectedResult, receivedResult)
 
     # clean
+    @unittest.skip('not useful')
     def test_clean(self):
         client = docker.from_env()
         runner = CliRunner()
@@ -44,7 +57,7 @@ CMD conda run --no-capture-output -n presto_container python unitTest.py
 
 
 class TestContainerManager(unittest.TestCase):
-
+    @unittest.skip('not useful')
     def test_containerManager(self):
         cacheFile = tempfile.NamedTemporaryFile()
         cacheFile.close()
@@ -53,7 +66,7 @@ class TestContainerManager(unittest.TestCase):
         # call get container several times
         num = 10
         index = 0
-        while( index < num ):
+        while index < num :
             controller.get_container(f'unitTest - get_container:  {index}')
             index += 1
         # delete the controller
@@ -68,14 +81,15 @@ class TestContainerManager(unittest.TestCase):
 class TestAdapterLibrary(unittest.TestCase):
 
     def test_start_server(self):
+        # check server is started
         pass
 
     def test_handle_post(self):
+        # check that handle post returns a zip file
+        # testResultFile = open("response_data.zip", "w")
+        # testResultFile.close()
+        # result = requests.post("http://{}:{}".format("127.0.0.1", 40000), files=testResultFile)
         pass
-
-    def test_output_received(self):
-        pass
-
 
 if __name__ == '__main__':
     unittest.main()
