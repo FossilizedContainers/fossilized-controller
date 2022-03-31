@@ -8,67 +8,54 @@ summary: We are creating a tool to help scientists containerize their code.
 ---
 
 ## Dependencies
-* Python
+* Python3
+  - wheel
 * Pip
 * Docker
 
-Make sure you have the latest versions of each installed before using our tool
+Make sure you have the latest versions of each installed before using our tool.
 
-## Creating a Container
+This was tested on a Mint Linux distribution.
+
+## Installing the Fossilized Controller
 
 Follow the instructions below for a quick introduction of our tool.
 
 ### 1. Download our tool
-The direct link for the tool can be found [here](https://github.com/FossilizedContainers/tech-demo/raw/master/presto/dist/presto-0.0.1-py3-none-any.whl). If you
-are using a Linux distribution then you can run the following command
+We currently do not have a pip distribution so it needs to be created and installed manually. The following instructions are based on [this](https://realpython.com/python-wheels/) article.
+
+Start by cloning our tool and moving into the controller directory
 ```bash
-wget https://github.com/FossilizedContainers/tech-demo/raw/master/presto/dist/presto-0.0.1-py3-none-any.whl
+git clone https://github.com/FossilizedContainers/fossilized-controller.git
+
+cd controller
 ```
 
-### 2. Install the tool through pip
+### 2. Set up the wheel
 ```bash
-pip install presto-0.0.1-py3-none-any.whl
+python setup.py bdist_wheel
 ```
 
-### 3. Run the tool's Dockerfile creation
+#### 2.2 Check the name of the wheel
 ```bash
-presto create
+user@VM:~/.../controller$ ls dist/
+presto-0.0.1-py3-none-any.whl
 ```
 
-From there you will be prompted for the OS you would like to use. For this example you can use `alpine`
-Afterwards will be a prompt asking for what message you would like to display. For this example you can use `Hello World!`
-
-This will show the Dockerfile
-```Dockerfile
-FROM alpine
-CMD ["echo", "Hello World!"]
-```
-
-### 4. Download or create the Dockerfile
-You can either copy and paste the example Dockerfile from above into a new file named `Dockerfile` or you can download it from our Github
+### 3. Install the tool through pip
 ```bash
-wget https://raw.githubusercontent.com/FossilizedContainers/tech-demo/master/C4/Dockerfile
+pip install dist/presto-0.0.1-py3-none-any.whl
 ```
 
-### 5. Run the presto run command
+### 3. Test the tool
+Run the following command to make sure that the tool is properly installed
 ```bash
-presto run
+presto guide
 ```
 
-You should see the following output of your container running
-```
-Building image from Dockerfile...
+### 4. Start containerizing!
+You can view our [Alpha Demo](http://localhost:4000/alpha_uc1.html) tab to see an example of containerizing LMRt.
 
-Finished building image...
+You can also view our other tabs if you would like to start containerizing your model from scratch, with LMRt as the guiding example.
 
-Running the container...
-
-Hello World!
-```
-
-### 6. Clean up your containers
-You can run the following command to stop and delete the container you just built.
-{% include note.html content="Be careful when running this command as it will stop and delete **ALL** containers" %}
-```bash
-presto clean
-```
+Email er883@nau.edu for any questions regarding the setup

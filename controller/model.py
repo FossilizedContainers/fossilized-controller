@@ -77,6 +77,7 @@ class Controller:
     def get_container(self, image: str):
         c = self.__find_container(image)
         if c is None:
+
             c = ContainerInfo(image)
             self.containers.append(c)
             self.save()
@@ -93,8 +94,14 @@ __cache_file = expanduser("~") + "/.presto/controller.cache"
 
 
 # Initialize the controller singleton if it doesn't exist
-def init_controller() -> Controller:
+def init_controller(cache_file=__cache_file) -> Controller:
     global __controller
     if __controller is None:
-        __controller = Controller(__cache_file)
+        __controller = Controller(cache_file)
     return __controller
+
+
+def delete_controller():
+    # delete the controller
+    global __controller
+    __controller = None
