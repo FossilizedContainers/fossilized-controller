@@ -31,6 +31,7 @@ class Adapter:
         self.inputs = None
         self.output_files = []
 
+        # rename to initial_wd
         self.initial_working_dir = None
 
     def start_server(self):
@@ -136,6 +137,7 @@ class Adapter:
 
         # run the reconstruction
         global_adapter.reconstruction(global_adapter)
+
         # any reading done in the reconstruction will change the cwd and while there are no plans for multiple pings to
         # the adapter, if the server is pinged multiple times, the file structure produces unintended behavior
         global_adapter.reset_wd()
