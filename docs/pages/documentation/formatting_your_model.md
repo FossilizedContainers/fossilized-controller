@@ -17,3 +17,6 @@ If your model has a config file, create a copy of it in JSON. JSON is formatted 
 "string key 3": 3,
 "string key 4": [1, 2, 3, 4]
 ```
+
+### Miscellaneous
+* Can use relative filepath for set_output_files()
