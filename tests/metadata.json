@@ -9,7 +9,7 @@
         "models_for_prior": ["trace_regrid"],
         "assimilate_selected_seasons": ["annual","summerOnly","winterOnly"]
     },
-    "input_files": {
+    "inputs": {
         "weldeab": "lipd-files/GeoB9307_3.Weldeab.2014.lpd",
         "net_cdf": "nc-files/WMI_Lear.nc"
     }

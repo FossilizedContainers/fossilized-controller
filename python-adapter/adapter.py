@@ -110,6 +110,7 @@ class Adapter:
         #                  file location. An example of this is:
         #                           "/WMI_Lear.nc"
         global_adapter.initial_working_dir = os.getcwd()
+
         for file in request.files:
             if file != "metadata":
                 # to preserve the subdirectories from the metadata.JSON, uses the "name" argument from the POST request
@@ -154,7 +155,6 @@ class Adapter:
                         temp_zip_location = \
                             os.path.relpath(os.path.join(root, file), start=global_adapter.initial_working_dir)
                         zip_handler.write(os.path.join(root, file), arcname=temp_zip_location)
-
 
         zip_handler.close()
 
