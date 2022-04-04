@@ -94,14 +94,8 @@ __cache_file = expanduser("~") + "/.presto/controller.cache"
 
 
 # Initialize the controller singleton if it doesn't exist
-def init_controller(cache_file=__cache_file) -> Controller:
+def init_controller() -> Controller:
     global __controller
     if __controller is None:
-        __controller = Controller(cache_file)
+        __controller = Controller(__cache_file)
     return __controller
-
-
-def delete_controller():
-    # delete the controller
-    global __controller
-    __controller = None
