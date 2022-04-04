@@ -26,10 +26,6 @@ entries:
       url: /index.html
       output: web
       type: homepage
-    - title: Downloading Tool
-      url: /downloading_tool.html
-      output: web
-      type: frontmatter
   - title: Alpha Demo
     output: web
     folderitems:

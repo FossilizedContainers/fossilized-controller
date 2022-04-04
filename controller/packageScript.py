@@ -61,7 +61,24 @@ def build(name):
     # creating a call that builds the container
     controller = controller_model.init_controller()
     print("Building the image.... This might take a while")
-    os.system('Docker build -t {imageName} .'.format(imageName=name))
+
+    try:
+        image_obj, generator = controller.client.images.build(path='.',
+                                                              tag=name)
+        while True:
+            try:
+                output = generator.__next__()
+                if "stream" in output:
+                    click.echo(output['stream'])
+            except StopIteration:
+                print("Building {} image complete".format(name))
+                break
+            except ValueError:
+                print("Error parsing output")
+
+    except docker.errors.BuildError:
+        print("ERROR: The build can not complete")
+
 
 # Function to run a container
 # This function does not return a value and gets a container name as an argument

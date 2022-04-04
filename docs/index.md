@@ -4,7 +4,7 @@ keywords: quickstart
 tags: [getting_started]
 sidebar: index_sidebar
 permalink: index.html
-summary: We are creating a tool to help scientists containerize their code.
+summary: A quick installation guide for the Fossilized Controller
 ---
 
 ## Dependencies
