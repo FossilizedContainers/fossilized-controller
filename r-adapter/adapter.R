@@ -1,9 +1,8 @@
-# All the libraries needed. httpuv required Rook, request, and httr.
-http.libraries = c("httpuv",
-                   "Rook", "request", "httr",
-                   "remotes")
+required.libraries = c("httpuv","Rook", "request", "httr", 
+                       "remotes", 
+                       "rjson")
 
-for ( pkg in http.libraries ) {
+for ( pkg in required.libraries ) {
   if ( !requireNamespace(pkg) ) {
     install.packages(pkg)
   }
@@ -15,93 +14,200 @@ for ( pkg in http.libraries ) {
 # load in lipdR package
 library("lipdR")
 
-
-# load in httpuv package
+# load in httpuv and rjson package
 library("httpuv")
+library("rjson")
 
 
 
-# Usage:
-# 
-# Run source on the file. If lipdR is not installed, uncomment line 17 to 
-# install the lipdR library with the remotes package. The remotes package should
-# already be installed after you've run source.
+# R Reference Class object; 
 #
-# To START the httpuv server, enter "httpuv.server" in the R console
+# R has multiple methods of creating classes: S3, S4, Reference Class, and R6 
+# are the one I'm aware of.
 #
-# To STOP the httpuv server, enter "stopAllServers()" in the R console
-# 
-# To LIST ALL running httpuv servers, enter "listServers()" in the R console
-
-
-
-# Information About httpuv Programs:
+# A Reference Class was used because S3 and S4 objects when passed into a 
+# function are only changed locally. The object calling the function remains
+# unchanged.
 #
-# req from call(req) is built on from Rook. This link below provides more info 
-# on req's fields on page 3 under the "The Environment" section:
-#       https://cran.r-project.org/web/packages/Rook/Rook.pdf
+# ASSUMPTIONS
+#     * All files are explicitly stated in metadata.JSON. To save input files 
+#       according to the metadata.JSON file, you would need to: 
+#               1. Loop through and only save the metadata.JSON file, parse it,
+#                  then loop through the POST payload again to save the files 
+#                  according to the metadata.JSON.
+#               2. Save the all the files in the current working directory. 
+#                  Then, input files are renamed according to the 'name' 
+#                  parameter. 
+#
+#       For this current implementation, the second choice was chosen.
+#
+#
+global.adapter <- setRefClass("Adapter",
+                              
+fields = list(server = "ANY",
+              reconstruction = "character",
+              parameters = "list",
+              inputs = "list",
+              output.files = "list",
+              initial.wd = "character", 
+              bin.file.types = "list"),
+
+methods = list(
+initialize = function(...) {
+  # normalizePath returns system-appropriate "slashes" or directory separators
+  initial.wd <<- normalizePath(getwd())
+  bin.file.types <<- list("lpd",
+                          "cdf")
+  
+  callSuper(...)
+},  
+startServer = function() {
+  # Usage:
+  # 
+  # Run source on the file. If lipdR is not installed, uncomment line 17 to 
+  # install the lipdR library with the remotes package. The remotes package 
+  # should already be installed after you've run source.
+  #
+  # To START the httpuv server, enter "httpuv.server" in the R console
+  #
+  # To STOP ALL httpuv servers, enter "stopAllServers()" in the R console
+  # 
+  # To LIST ALL running httpuv servers, enter "listServers()" in the R console
+  
+  
+  # Information About httpuv Programs:
+  #
+  # req from call(req) is built on from Rook. This link below provides more info 
+  # on req's fields on page 3 under the "The Environment" section:
+  #       https://cran.r-project.org/web/packages/Rook/Rook.pdf
+  # 
+  # Also includes additional field HEADERS just for the httpuv package. Here is 
+  # an example output:
+  #       accept 
+  #         "*/*" 
+  #       accept-encoding 
+  #         "gzip, deflate" 
+  #       connection 
+  #         "keep-alive" 
+  #       content-length 
+  #         "12045" 
+  #       content-type 
+  #         "multipart/form-data; boundary=344d170547b298b23acea1965702db19" 
+  #       host 
+  #         "127.0.0.1:4000" 
+  #       user-agent 
+  #         "python-requests/2.26.0"
+  
+  # httpuv.server holds a server object that can be stopped with stopServer()
+  server <<- httpuv::startServer(host = "127.0.0.1", 
+                                port = 4000,
+                                list(call = 
+           function(req) {
+             body = NULL
+             
+             if (req$REQUEST_METHOD == "POST") {
+               body = handlePost(req)
+             }
+             
+             
+             if (is.null(body)) {
+               body = paste0("Time: ", 
+                             Sys.time(), 
+                             "<br>Something wrong with handePost function")  
+             }
+             
+             
+             ret = list(status = 200L,
+                        headers = list('Content-Type' = 'application/zip'),
+                        body = body)
+             
+             return(ret)
+           }))
+},
+
+# Stop the server in the server field
+stopServer = function() {
+  httpuv::stopServer(server)
+},
+
+# What is called by the adapter's HTTP server to run the model
+register = function(lambda) {
+  reconstruction <<- lambda
+},
+
+# TODO: Params in a JSON file;parses the JSON file and converts strings to actual, 
+# expected values, e.g. ints, arrays, etc. Returns map with string keys
 # 
-# Also includes additional field HEADERS just for the httpuv package. Here is an
-# example output:
-#       accept 
-#         "*/*" 
-#       accept-encoding 
-#         "gzip, deflate" 
-#       connection 
-#         "keep-alive" 
-#       content-length 
-#         "12045" 
-#       content-type 
-#         "multipart/form-data; boundary=344d170547b298b23acea1965702db19" 
-#       host 
-#         "127.0.0.1:4000" 
-#       user-agent 
-#         "python-requests/2.26.0"
+# Params are supplied by the model's documentation
+# If config = adapter.getParams: config.get("spread") = relevant value in 
+# metadata.JSON
+getFiles = function() {
+  return(inputs)
+},
 
-httpuv.server <- startServer(host = "127.0.0.1", 
-                             port = 4000,
-                             list(
-                               call = 
-                                 function(req) {
-body = NULL
-                                   
-if (req$REQUEST_METHOD == "POST") {
-  parse.results = parse_multipart(req)
-  
-  body = paste0(body, "Results of file upload via POST:")
-  
-  for (part in parse.results) {
-    # read file back in with lipidR functions
-    #
-    # NOTE:
-    #
-    # If there's an error, the console prints out the error message for 
-    # readLipd() and returns an empty list
-    read.lipd.result <- list(readLipd(part$filename))
+# Returns parameters field
+getParameters = function() {
+  return(parameters)
+},
 
-    check.string <- ifelse(length(read.lipd.result), 
-                           " ... uploaded successfully",
-                           " ... readLipd error")
-    
-    body = paste0(body, "<br>", part, check.string)
-  }
-}
-  
-  
-if (is.null(body)) {
-  body = paste0("Time: ", Sys.time(), "<br>Path requested: ", req$PATH_INFO)  
-}
-                                   
-  
-ret = list(status = 200L,
-           headers = list('Content-Type' = 'text/html'),
-           body = body)
+# Returns output.files field
+getOutputFiles = function () {
+  return(output.files)
+},
 
-return(ret)
-}))
+# TODO: Signals to adapter what files to send back in the HTTP Response message.
+#
+# Always assumes that you are appending file to list of files to send back as 
+# output.
+setOutputFiles = function(file.location) {
+  # R file management magic to see if arg is valid file location
+},
 
+resetWd = function() {
+  # R file management magic to set wd to initial.wd
+  setwd(initial.wd)
+},
 
-# Utility Functions: parse_multipart
+handlePost = function(env) {
+  # parse files: set parameters and inputs
+  print(parseMultipart(env))
+  
+  # save files with parseMultipart, renameByMetadata, and resetWd after each 
+  # save, update inputs
+  
+  # run reconstruction
+  #evaluate(reconstruction)
+  
+  # resetWd
+  #resetWd()
+  
+  # save output.files in a zip file
+  
+  # return zip file string
+  # ? https://github.com/cran/Rook
+},
+
+# Utility Function: saveMetadata
+renameByMetadata = function(env) {
+  # look through input stream for metadata file and save it; the name parameter 
+  # will always be "metadata" according to controller/model.py's start method
+  
+  # check if folder exists 
+  # file.exists(absolute.path)
+  
+  # normalizePath -> returns absolute path, e.g. double backslash
+  # exists with file.exists
+  
+},
+
+# Utility Function: zipOutput
+#
+# Function that creates a new_response_data.zip
+zipOutput = function(){
+  # list.files(, recursive = TRUE) if string is a directory
+},
+
+# Utility Function: parseMultipart
 
 # Borrows heavily from the parse function in the Rook's package /R/utils.R file. 
 # This function parses and saves a file or files in a POST request's form data 
@@ -111,7 +217,7 @@ return(ret)
 #   * EASY ACCESS POINT to: "CHANGE WHERE THE FILE IS SAVED", 
 #   * Specific values in the comments will not apply in all situations, i.e. 
 #           the values derived from the POST request are subject to change
-parse_multipart = function(env){
+parseMultipart = function(env){
   
   # check if env is empty
   if (!exists('CONTENT_TYPE', env)) return(NULL)
@@ -258,13 +364,13 @@ parse_multipart = function(env){
   # reading in the size of boundaryEOL. Because of how Multipart is specified, 
   # the first bytes should always be the boundary + EOL.
   if (!length(i) || i != 1){
-    warning("bad content body")
+    warning("POST Request: Bad Content Body")
     input$rewind()
     return(NULL)
   }
-
-    
-
+  
+  
+  
   # Helper functions to use later on: fill_buffer, slice_buffer
   
   # fill_buffer reads in a number of bytes into the x environment. The
@@ -337,7 +443,7 @@ parse_multipart = function(env){
   
   
   
-  # Loop that looks for a parts and the closing boundary 
+  # Loop that looks for a part and the subsequent closing boundary 
   while(TRUE) {
     head <- value <- NULL
     filename <- content_type <- name <- NULL
@@ -441,8 +547,12 @@ parse_multipart = function(env){
           if (!is.null(filename) || !is.null(content_type)){
             data <- list()
             
+            # Assume all parts have a 'filename' parameter as specified in RFC
+            # 7578
             if (!is.null(filename)) {
               data$filename <- strsplit(filename, '[\\/]', perl=TRUE)[[1L]]
+            } else {
+              return("No filename parameter")
             }
             
             if (!is.null(content_type)) {
@@ -451,22 +561,23 @@ parse_multipart = function(env){
             
             data$head <- head
             
-            # CHANGE WHERE THE FILE IS SAVED
+            # Easy Access Point: CHANGE WHERE THE FILE IS SAVED
             con <- file(data$filename, open='wb')
             
             writeBin(value,con)
             close(con)
+            print(data)
             
             params[[name]] <- data
           } else {
             len <- length(value)
             
-            # Trim trailing EOL
+            ### Trim trailing EOL
             if (len > 2 && length(Rook::Utils$raw.match(EOL, value[(len-1):len], all=FALSE))) {
               len <- len -2
             }
             
-            # Handle array parameters
+            ### Handle array parameters
             paramValue <- Rook::Utils$escape(rawToChar(value[1:len]))
             paramSet <- FALSE
             
@@ -484,37 +595,38 @@ parse_multipart = function(env){
         }
         break
       } else if (buf$unread){ # The boundary isn't currently in read_buffer 
-                              # but still can be further down the input stream
+        # but still can be further down the input stream
         fill_buffer(buf) 
-      } else { # We've read everything and still haven't seen a boundary
+      } else { ### Read everything and still haven't seen a boundary
         break  
       }
     }
     
-    # Bad post payload
+    ### Bad POST payload; looped through and did not find an encapsulating or 
+    ### boundary, in either case
     if (is.null(value)){ 
       input$rewind()
       warning("Bad POST payload: Searching for a body part")
       return(NULL)
     }
     
-    # Now search for ending markers or the beginning of another part
+    ### Now search for ending markers or the beginning of another part
     while (buf$read_buffer_len < 2 && buf$unread) { fill_buffer(buf) }
     
-    # Bad stuff at the end. just return what we've got and presume everything is 
-    # okay
+    ### Bad stuff at the end; return what we've got and presume everything is 
+    ### okay
     if (buf$read_buffer_len < 2 && buf$unread == 0){
       input$rewind()
       return(params)
     }
     
-    # We've found a valid closing boundary ending
+    ### Found a valid closing boundary ending
     if (length(Rook::Utils$raw.match('--', buf$read_buffer[1:2], all=FALSE))){
       input$rewind()
       return(params)
     }
     
-    # Skip past the EOL
+    ### Skip past the EOL
     if (length(Rook::Utils$raw.match(EOL, buf$read_buffer[1:EOL_size], all=FALSE))){
       slice_buffer(1, EOL_size, buf)
     } else {
@@ -523,7 +635,7 @@ parse_multipart = function(env){
       return(params)
     }
     
-    # Another sanity check before we try to parse another part; if the buffer 
+    # Another sanity check before trying to parse another part; if the buffer 
     # and unread byte length is less than the boundary size, then there isn't a
     # proper ending to the POST payload
     if ((buf$read_buffer_len + buf$unread) < boundary_size){
@@ -531,5 +643,7 @@ parse_multipart = function(env){
       input$rewind()
       return(params)
     }
-  } # end of while from line 378
+  } # end of while from line 447~
 }
+))$new()
+
