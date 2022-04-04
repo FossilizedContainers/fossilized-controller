@@ -56,8 +56,9 @@ methods = list(
 initialize = function(...) {
   # normalizePath returns system-appropriate "slashes" or directory separators
   initial.wd <<- normalizePath(getwd())
-  bin.file.types <<- list("lpd",
-                          "cdf")
+  bin.file.types <<- list(".cdf",
+                          ".lpd",
+                          ".nc")
   
   callSuper(...)
 },  
@@ -170,7 +171,7 @@ resetWd = function() {
 
 handlePost = function(env) {
   # parse files: set parameters and inputs
-  print(parseMultipart(env))
+  parseMultipart(env)
   
   # save files with parseMultipart, renameByMetadata, and resetWd after each 
   # save, update inputs
@@ -214,7 +215,7 @@ zipOutput = function(){
 # in the current working directory.
 #
 # NOTE:
-#   * EASY ACCESS POINT to: "CHANGE WHERE THE FILE IS SAVED", 
+#   * EASY ACCESS POINT to: CHANGE HOW THE FILE IS SAVED, 
 #   * Specific values in the comments will not apply in all situations, i.e. 
 #           the values derived from the POST request are subject to change
 parseMultipart = function(env){
@@ -238,8 +239,6 @@ parseMultipart = function(env){
   if (!grepl('multipart', env$CONTENT_TYPE)) return(NULL)
   
   
-  # File extensions that should be saved in binary
-  binary.file.exts = c(".lpd", ".cdf")
   
   # Some constants regarding boundaries and a buffer environment to read the 
   # data into
@@ -561,12 +560,21 @@ parseMultipart = function(env){
             
             data$head <- head
             
-            # Easy Access Point: CHANGE WHERE THE FILE IS SAVED
-            con <- file(data$filename, open='wb')
+            # Easy Access Point: CHANGE HOW THE FILE IS SAVED
+            file.ext <- tail(paste0('.', strsplit(data$filename, '[.]', perl=TRUE)[[1L]]), 1)
             
-            writeBin(value,con)
+            if (file.ext %in% bin.file.types) {
+              con <- file(data$filename, open='wb')
+              writeBin(value, con)
+            } else {
+              print(data$filename)
+              
+              value <- rawToChar(value)
+              
+              con <- file(data$filename, open='w')
+              write(value, con)
+            }
             close(con)
-            print(data)
             
             params[[name]] <- data
           } else {

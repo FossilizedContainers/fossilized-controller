@@ -11,13 +11,13 @@ library("ncdf4")
 # TODO: A way to persist the adapter between the main function file call and 
 # HTTP Server
 
-fakeModel = function(bogus, lipd.file) {
-  # Register the main function / process
-  # adapter.register(registerFunction)
-}
-
-registerFunction = function () {
-  # adapter.getParams()
+fakeModel = function(adapter) {
+  # check to see inside function
+  print("\n---\nStart of the fake_model function\n---\n")
+  
+  
+  # files handed to function
+  # adapter.getFiles()
   
   lipd.results <- readLipd(lipd.file)
   
@@ -25,8 +25,8 @@ registerFunction = function () {
     return("Invalid LiPD file")
   }
   
-  net.cdf.path <- 
-    "C:/Users/mumbi/Documents/spring 2022/cs 486/fossilized-controller/test/nc-files/WMI_Lear.nc"
-  
-  # adapter.send(net.cdf.path)
+  # adapter.setOutputFiles()
 }
+
+# adapter$register("fakeModel(adapter)")
+# adapter$startServer()
