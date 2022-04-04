@@ -19,23 +19,27 @@ adapter = adapter.global_adapter
 
 
 class TestPackageMethods(unittest.TestCase):
-    @unittest.skip('not useful')
+
     def test_create(self):
         runner = CliRunner()
         result = runner.invoke(create, input='python unitTest.py')
-        expectedResult = '''FROM continuumio/anaconda3
+        expectedResult = """FROM continuumio/anaconda3
+
 RUN conda update -n base -c defaults conda
+
 # setup conda environment
 COPY presto_environment.yml .
 RUN conda env create -f presto_environment.yml
 RUN echo "conda activate presto_container" >> ~/.bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 RUN conda activate presto_container
+
 # copy all files to the root directory of the container
 COPY . /
+
 # run the command in the context of the environment we made
 CMD conda run --no-capture-output -n presto_container python unitTest.py
-'''
+"""
         # read file to a string and then compare
         receivedResult = ""
         file = open('Dockerfile', 'r')
@@ -43,7 +47,6 @@ CMD conda run --no-capture-output -n presto_container python unitTest.py
         self.assertEqual(expectedResult, receivedResult)
 
     # clean
-    @unittest.skip('not useful')
     def test_clean(self):
         client = docker.from_env()
         runner = CliRunner()
@@ -53,7 +56,7 @@ CMD conda run --no-capture-output -n presto_container python unitTest.py
 
 
 class TestContainerManager(unittest.TestCase):
-    @unittest.skip('not useful')
+
     def test_containerManager(self):
         cacheFile = tempfile.NamedTemporaryFile()
         cacheFile.close()
@@ -75,17 +78,19 @@ class TestContainerManager(unittest.TestCase):
 
 # Unit testing for adapter library
 class TestAdapterLibrary(unittest.TestCase):
-
+    @unittest.skip("testing")
     def test_start_server(self):
-        # check server is started
-        pass
+        adapter.start_server()
+        result = requests.get("http://{}:{}".format("127.0.0.1", 40000))
+        self.assertEqual(result, 200)
 
+    @unittest.skip("testing")
     def test_handle_post(self):
         # check that handle post returns a zip file
-        # testResultFile = open("response_data.zip", "w")
-        # testResultFile.close()
-        # result = requests.post("http://{}:{}".format("127.0.0.1", 40000), files=testResultFile)
-        pass
+        testResultFile = open("response_data.zip", "w")
+        testResultFile.close()
+        result = requests.post("http://{}:{}".format("127.0.0.1", 40000), files=testResultFile)
+        self.assertIsNotNone(result)
 
 if __name__ == '__main__':
     unittest.main()
