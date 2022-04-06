@@ -30,11 +30,19 @@ library("rjson")
 #
 # USAGE
 #     * If lipdR is not installed, uncomment line 12 to install the 'lipdR' 
-#         library with the remotes package. The remotes package should already be 
-#         installed after running source on this file.
-#     * To START the server, run "global.adapter$startServer()"
-#     * To STOP the server, run "global.adapter$stopServer()"
-# 
+#         library with the remotes package. The remotes package should already 
+#         be installed after running source on this file.
+#     * To START the server, run "global.adapter$startServer()".
+#     * To STOP the server, run "global.adapter$stopServer()".
+#
+#
+#
+# REASONS FOR 500 ERRORS LOG
+#     * 'body' in 'call(req)' is not a character vector / string. 'body' must 
+#         always be a character vector / string.
+#
+#
+#
 # ASSUMPTIONS
 #     * All files are explicitly stated in metadata.JSON. To save input files 
 #       according to the metadata.JSON file, you would need to: 
@@ -93,6 +101,7 @@ initialize = function(...) {
 #       user-agent 
 #         "python-requests/2.26.0"
 startServer = function() {
+  
   if (is.null(server)) {
     server <<- httpuv::startServer(host="127.0.0.1", 
                                    port=4000,
@@ -133,7 +142,7 @@ stopServer = function() {
     server <<- NULL
   } else { 
     httpuv::stopAllServers()
-    warning("Stopped all servers for new R adapter object") 
+    warning("Stopped all servers; there was no server in adapter's server field") 
   }
 },
 
@@ -179,7 +188,7 @@ resetWd = function() {
 
 handlePost = function(req) {
   
-  # parse files: set parameters and inputs
+  # Parse files and set parameters
   
   parts = parseMultipart(req)
   
@@ -188,8 +197,9 @@ handlePost = function(req) {
     return(parts) 
   }
   
-  # save files with parseMultipart, renameByMetadata, and resetWd after each 
-  # save, update inputs
+  # renameByMetadata and set inputd
+  # renameByMetadata(parts)
+  
   
   # run reconstruction
   #evaluate(reconstruction)
@@ -200,7 +210,6 @@ handlePost = function(req) {
   # save output.files in a zip file
   
   # return zip file string
-  # ? https://github.com/cran/Rook
   zip.file <- "TODO: ZIP file creation; you Gucci"
   return(zip.file)
 },
@@ -237,9 +246,9 @@ zipOutput = function(){
 # in the current working directory.
 #
 # NOTE:
-#   * EASY ACCESS POINT to: CHANGE HOW THE FILE IS SAVED, 
+#   * EASY ACCESS POINT to: CHANGE HOW THE FILE IS SAVED
 #   * Specific values in the comments will not apply in all situations, i.e. 
-#           the values derived from the POST request are subject to change
+#           the values derived from the POST request are subject to change.
 parseMultipart = function(env){
   
   # Bad POST Payload: While a 'Content-Type' header field is not required, as 
