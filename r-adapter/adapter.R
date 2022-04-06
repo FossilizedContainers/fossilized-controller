@@ -60,6 +60,7 @@ fields = list(server = "ANY",
 methods = list(
 
 initialize = function(...) {
+  server <<- NULL
   initial.wd <<- normalizePath(getwd())
   bin.file.types <<- list(".cdf",
                           ".lpd",
@@ -92,39 +93,48 @@ initialize = function(...) {
 #       user-agent 
 #         "python-requests/2.26.0"
 startServer = function() {
-  server <<- httpuv::startServer(host = "127.0.0.1", 
-                                port = 4000,
-                                list(call = 
-           function(req) {
-             body = NULL
-             
-             if (req$REQUEST_METHOD == "POST") {
-               body = handlePost(req)
-             }
-             
-             
-             if (is.null(body)) {
-               body = 
-                 paste0("Time: ", Sys.time(), 
-                        "<br>Something wrong with handePost function.",
-                        "<br> Here is the error message thrown: ",
-                        body)  
-             }
-             
-             
-             ret = list(status = 200L,
-                        headers = list('Content-Type' = 'application/zip'),
-                        body = body)
-             
-             return(ret)
-           }))
+  if (is.null(server)) {
+    server <<- httpuv::startServer(host="127.0.0.1", 
+                                   port=4000,
+                                   list(call= function(req) {
+               body = "Blank"
+               headers = list('Content-Type' = 'text/html')
+               
+               if (req$REQUEST_METHOD == "POST") {
+                 body = handlePost(req)
+                 
+                 if (!file.exists(body)) {
+                   body = 
+                     paste0("Time: ", Sys.time(), 
+                            "<br>Something wrong with the handlePost function.",
+                            "<br> Here is the error message thrown: ",
+                            body)  
+                 } else { 
+                   headers = list('Content-Type' = 'application/zip') 
+                 }
+               }
+               
+               ret = list(status = 200L,
+                          headers = headers,
+                          body = body)
+               
+               return(ret)
+             }))
+  } else { 
+    warning("There is already a server running in the R adapter") 
+  }
 },
 
 # Stop the server in the server field
 stopServer = function() {
   
-  httpuv::stopServer(server)
-  server <<- NULL
+  if (!is.null(server)){
+    httpuv::stopServer(server)
+    server <<- NULL
+  } else { 
+    httpuv::stopAllServers()
+    warning("Stopped all servers for new R adapter object") 
+  }
 },
 
 # What is called by the adapter's HTTP server to run the reconstruction
@@ -167,10 +177,16 @@ resetWd = function() {
   setwd(initial.wd)
 },
 
-handlePost = function(env) {
+handlePost = function(req) {
   
   # parse files: set parameters and inputs
-  parseMultipart(env)
+  
+  parts = parseMultipart(req)
+  
+  # if parts is not a list, then it should be an error string to return 
+  if (typeof(parts) != "list") {
+    return(parts) 
+  }
   
   # save files with parseMultipart, renameByMetadata, and resetWd after each 
   # save, update inputs
@@ -185,6 +201,8 @@ handlePost = function(env) {
   
   # return zip file string
   # ? https://github.com/cran/Rook
+  zip.file <- "TODO: ZIP file creation; you Gucci"
+  return(zip.file)
 },
 
 # Utility Function: saveMetadata
@@ -251,8 +269,8 @@ parseMultipart = function(env){
   
   
   
-  # Some constants regarding boundaries and a buffer environment to read the 
-  # data into
+  # Define Constants Regarding Boundaries and A Buffer Environment to Read Data 
+  # In To
   
   # EOL aka End of Line; EOL is defined in Rook::Utils as part of the Multipart 
   # class; it is a CRLF or Carriage Return + Line Feed.
@@ -333,7 +351,6 @@ parseMultipart = function(env){
   # EOL_size = 2L
   EOL_size = Rook::Utils$bytesize(EOL)
   
-  
   # 'new.env' is a function from the base R package that creates a new 
   # environment; environments in R have a lot of interesting uses and are how 
   # Rook stores HTTP requests
@@ -356,15 +373,15 @@ parseMultipart = function(env){
   # buf$unread = 20944
   buf$unread <- content_length - boundary_size 
   
-  # i = 1 if input formatted correctly.
+  # 'i' = 1 if POST payload formatted correctly.
   #
   # 'Rook::Utils$raw.match' is a function that takes 2 arguments. The first, the
-  # needle, is a character or raw vector while the second, the haystack, is 
+  # 'needle', is a character or raw vector while the second, 'haystack', is 
   # always a raw vector.
   #
-  # The function returns the first place / index where the needle was found in 
-  # the stack. E.g. if the 5th index is where the needle occurs in the haystack,
-  # then 5 is returned. If there is no needle in the haystack, then 0 is 
+  # The function returns the first place / index where 'needle' was found in the
+  # 'stack'. E.g. if the 5th index is where 'needle' occurs in the 'haystack',
+  # then 5 is returned. If there is no 'needle' in the 'haystack', then 0 is 
   # returned.
   i <- Rook::Utils$raw.match(boundaryEOL, buf$read_buffer, all=FALSE)
   
@@ -372,9 +389,8 @@ parseMultipart = function(env){
   # the first bytes in the payload; because of how Multipart is defined, the 
   # first bytes in the payload should always be the boundary + EOL.
   if (!length(i) || i != 1){
-    warning("Bad POST Payload: Bad Content Body")
     input$rewind()
-    return(NULL)
+    return("Bad POST Payload: Bad Content Body")
   }
   
   
@@ -440,7 +456,7 @@ parseMultipart = function(env){
   
   
   
-  # Prime the 'read_buffer'
+  # Prime 'read_buffer'
   
   # buf$read_buffer = raw(0)
   buf$read_buffer <- raw()
@@ -488,9 +504,8 @@ parseMultipart = function(env){
     
     # Bad POST Payload: If there isn't a valid header, error out
     if (is.null(head)){
-      warning("Bad POST Payload: Searching for a header")
       input$rewind()
-      return(NULL)
+      return("Bad POST Payload: Searching for a header")
     }
     
     
@@ -501,6 +516,7 @@ parseMultipart = function(env){
     # they're 8bit clean
     
     head <- rawToChar(head)
+    
     token <- '[^\\s()<>,;:\\"\\/\\[\\]?=]+'
     condisp <- paste('Content-Disposition:\\s*',token,'\\s*',sep='')
     dispparm <- paste(';\\s*(',token,')=("(?:\\"|[^"])*"|',token,')*',sep='')
@@ -539,7 +555,7 @@ parseMultipart = function(env){
     
     
     
-    # Find Start of the Next Boundary Encapsulating or Closing, and Save the 
+    # Find Start of the Next Boundary Encapsulating or Closing and Save the 
     # Current Body In the Working Directory
     
     while(TRUE){
@@ -573,16 +589,13 @@ parseMultipart = function(env){
             data$head <- head
             
             # Easy Access Point: CHANGE HOW THE FILE IS SAVED
-            file.ext <- tail(paste0('.', strsplit(data$filename, '[.]', perl=TRUE)[[1L]]), 1)
+            file.ext <- paste0('.', tail(strsplit(data$filename, '[.]', perl=TRUE)[[1L]], 1))
             
             if (file.ext %in% bin.file.types) {
               con <- file(data$filename, open='wb')
               writeBin(value, con)
             } else {
-              print(data$filename)
-              
               value <- rawToChar(value)
-              
               con <- file(data$filename, open='w')
               write(value, con)
             }
@@ -593,8 +606,8 @@ parseMultipart = function(env){
             len <- length(value)
             
             # Trim trailing EOL
-            if (len > 2 && length(Rook::Utils$raw.match(EOL, value[(len-1):len], all=FALSE))) {
-              len <- len -2
+            if (len > 2 && length(Rook::Utils$raw.match(EOL, value[(len - 1):len], all=FALSE))) {
+              len <- len - 2
             }
             
             # Handle array parameters
@@ -615,7 +628,7 @@ parseMultipart = function(env){
         }
         break
       } else if (buf$unread){ # The boundary is not currently in 'read_buffer' 
-        # but can still be further down the input stream
+                              # but can still be further down the input stream
         fill_buffer(buf) 
       } else { # Read everything and still haven't seen a boundary
         break  
@@ -649,18 +662,16 @@ parseMultipart = function(env){
     if (length(Rook::Utils$raw.match(EOL, buf$read_buffer[1:EOL_size], all=FALSE))){
       slice_buffer(1, EOL_size, buf)
     } else {
-      warning("Bad POST Payload: End of Line \"\r\n\" Not Present")
       input$rewind()
-      return(params)
+      return("Bad POST Payload: End of Line \'\r\n\' Not Present")
     }
     
     # Bad POST Payload: Another sanity check before trying to parse another 
     # part; if the buffer and 'unread' byte length is less than the boundary 
     # size, then there isn't a proper ending to the POST payload
     if ((buf$read_buffer_len + buf$unread) < boundary_size){
-      warning("Bad POST Payload: Unknown Trailing Bytes")
       input$rewind()
-      return(params)
+      return("Bad POST Payload: Unknown Trailing Bytes")
     }
   } # end of while from line ~455
 }
