@@ -26,10 +26,6 @@ entries:
       url: /index.html
       output: web
       type: homepage
-    - title: Containerizing LMRt
-      url: /lmrt.html
-      output: web
-      type: frontmatter
   - title: Containerizing LMRt
     output: web
     folderitems:
