@@ -87,4 +87,4 @@ adapter.py  data  main.py  presto_environment.yml
 ```
 
 We are now ready to modify our main file so that is it adapter ready
-## [Next](fossilized-controller/gathering_files.html)
+## [Next](https://fossilizedcontainers.github.io/fossilized-controller/modifying_main.html)
