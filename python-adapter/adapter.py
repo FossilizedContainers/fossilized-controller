@@ -6,12 +6,12 @@ import os
 import zipfile
 
 '''
-1. Refactor code so it's more aligned to Flask's convention and similar to this example: 
+1. Refactor code so it's more aligned to Flask's convention and similar to this example:
         https://www.askpython.com/python-modules/flask/flask-rest-api
 
         Would solve Pycharm's request for handle_post to have a parameter
-        
-2. Look into the production deployment for Flask: 
+
+2. Look into the production deployment for Flask:
         https://flask.palletsprojects.com/en/1.1.x/deploying/
         https://flask.palletsprojects.com/en/1.1.x/tutorial/deploy/
 
@@ -28,9 +28,10 @@ class Adapter:
         self.reconstruction = None
 
         self.parameters = None
-        self.input_files = None
+        self.inputs = None
         self.output_files = []
 
+        # rename to initial_wd
         self.initial_working_dir = None
 
     def start_server(self):
@@ -47,7 +48,7 @@ class Adapter:
     # function to get the list of files from the json file
     def get_files(self):
         # using the json key "inputs" to return the files
-        return self.input_files
+        return self.inputs
 
     # function to get the list of parameters from the json file
     def get_parameters(self):
@@ -76,9 +77,9 @@ class Adapter:
     # function to read the lipd files and store them in variables
     # Main Steps of Function:
     #   1. Parse metadata.JSON (finished)
-    #   2. Save metadata.JSON["parameters"] in the adapter's parameters field. Save metadata.JSON["input_files"] in
-    #               adapter's input_files field. (finished)
-    #   3. Store all other files in adapter's input_files dictionary with file name as key and file data as value
+    #   2. Save metadata.JSON["parameters"] in the adapter's parameters field. Save metadata.JSON["inputs"] in
+    #               adapter's inputs field. (finished)
+    #   3. Store all other files in adapter's inputs dictionary with file name as key and file data as value
     #               (in-progress)
     #   4. Run the reconstruction with "exec(adapter.reconstruction)" ()
     #   5. Compress the files at adapter.output_files and send back in HTTP Response message
@@ -92,12 +93,12 @@ class Adapter:
         metadata = json.loads(request.files['metadata'].read())
 
         global_adapter.parameters = metadata['parameters']
-        global_adapter.input_files = metadata['input_files']
+        global_adapter.inputs = metadata['inputs']
 
         # Reads in the input files, request.files is a dictionary of this object:
         #   https://werkzeug.palletsprojects.com/en/2.0.x/datastructures/#werkzeug.datastructures.FileStorage
 
-        # For input_files, the  key, value pair is specific:
+        # For inputs, the  key, value pair is specific:
         #       key = the shorthand for file, should mirror the name in the POST request argument
         #       value = the location of the file; e.g.
         #                   "WMI_Lear.nc"
@@ -109,11 +110,12 @@ class Adapter:
         #                  file location. An example of this is:
         #                           "/WMI_Lear.nc"
         global_adapter.initial_working_dir = os.getcwd()
+
         for file in request.files:
             if file != "metadata":
                 # to preserve the subdirectories from the metadata.JSON, uses the "name" argument from the POST request
                 # and looks up the name in the metadata.JSON to see what file structure to preserve
-                new_path = os.path.abspath(global_adapter.input_files[file])
+                new_path = os.path.abspath(global_adapter.inputs[file])
                 new_dirs = os.path.split(new_path)[0]
 
                 if not os.path.isdir(new_dirs):
@@ -124,7 +126,7 @@ class Adapter:
                 request.files[file].save(new_path)
 
                 # save location of files
-                global_adapter.input_files[file] = new_path
+                global_adapter.inputs[file] = new_path
 
                 # if file.filename has .lpd extension, try to use readLipd and throw error if it fails
                 if (os.path.splitext(request.files[file].filename))[1] == ".lpd":
@@ -136,6 +138,7 @@ class Adapter:
 
         # run the reconstruction
         global_adapter.reconstruction(global_adapter)
+
         # any reading done in the reconstruction will change the cwd and while there are no plans for multiple pings to
         # the adapter, if the server is pinged multiple times, the file structure produces unintended behavior
         global_adapter.reset_wd()
@@ -153,7 +156,6 @@ class Adapter:
                             os.path.relpath(os.path.join(root, file), start=global_adapter.initial_working_dir)
                         zip_handler.write(os.path.join(root, file), arcname=temp_zip_location)
 
-
         zip_handler.close()
 
         return send_from_directory(global_adapter.initial_working_dir, "response_data.zip")
@@ -161,5 +163,3 @@ class Adapter:
 
 # create global adapter instance
 global_adapter = Adapter(app)
-
-
