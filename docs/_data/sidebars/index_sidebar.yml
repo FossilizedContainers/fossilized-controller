@@ -26,6 +26,21 @@ entries:
       url: /index.html
       output: web
       type: homepage
+    - title: Containerizing LMRt
+      url: /lmrt.html
+      output: web
+      type: frontmatter
+  - title: Containerizing LMRt
+    output: web
+    folderitems:
+      - title: Getting Started
+        url: /gathering_files.html
+        output: web
+        type: frontmatter
+      - title: Setting up the model
+        url: /modifying_main.html
+        output: web
+        type: frontmatter
   - title: Alpha Demo
     output: web
     folderitems:
