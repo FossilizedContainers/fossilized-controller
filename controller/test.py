@@ -7,12 +7,16 @@ import docker
 import unittest
 import model as controller_model
 import tempfile
-import flask_unittest
+import json
+import requests
 
-tests_dir = os.path.dirname(os.path.realpath(__file__))
-fc_dir = os.path.dirname(tests_dir)
+controller_dir = os.path.dirname(os.path.realpath(__file__))
+fc_dir = os.path.dirname(controller_dir)
+
 python_adapter_dir = os.path.join(fc_dir, "python-adapter")
 sys.path.append(python_adapter_dir)
+
+tests_dir = os.path.join(fc_dir, "tests")
 
 import adapter
 import time
@@ -86,13 +90,27 @@ class TestAdapterLibrary(unittest.TestCase):
         self.app.config['TESTING'] = True
         self.app = self.app.test_client()
 
+        os.chdir(tests_dir)
+
     def test_start_server(self):
         rv = self.app.get("/")
         assert b'Server Is Up' in rv.data
 
-    @unittest.skip("Testing")
+    #@unittest.skip("Testing")
     def test_handle_post(self):
-        rv = self.app.post("/")
+
+        run_metadata = json.load(open("metadata.json"))
+
+        files = {
+            "metadata.json": open("metadata.json", 'rb')
+        }
+        for file_input in run_metadata['inputs']:
+            typ = run_metadata['inputs'][file_input]['type']
+            location = run_metadata['inputs'][file_input]['location']
+            # add the external files listed in the run metadata to the post request
+            files[str(file_input)] = open(location, 'rb')
+
+        rv = requests.post("http://127.0.0.1:4000/", files=files)
 
         print(rv)
         # check that handle post returns a zip file
