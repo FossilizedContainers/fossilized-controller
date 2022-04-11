@@ -7,6 +7,7 @@ import docker
 import unittest
 import model as controller_model
 import tempfile
+import flask_unittest
 
 tests_dir = os.path.dirname(os.path.realpath(__file__))
 fc_dir = os.path.dirname(tests_dir)
@@ -14,6 +15,7 @@ python_adapter_dir = os.path.join(fc_dir, "python-adapter")
 sys.path.append(python_adapter_dir)
 
 import adapter
+import time
 
 adapter = adapter.global_adapter
 
@@ -78,19 +80,26 @@ class TestContainerManager(unittest.TestCase):
 
 # Unit testing for adapter library
 class TestAdapterLibrary(unittest.TestCase):
-    @unittest.skip("testing")
-    def test_start_server(self):
-        adapter.start_server()
-        result = requests.get("http://{}:{}".format("127.0.0.1", 40000))
-        self.assertEqual(result, 200)
 
-    @unittest.skip("testing")
+    def setUp(self):
+        self.app = adapter.server
+        self.app.config['TESTING'] = True
+        self.app = self.app.test_client()
+
+    def test_start_server(self):
+        rv = self.app.get("/")
+        assert b'Server Is Up' in rv.data
+
+    @unittest.skip("Testing")
     def test_handle_post(self):
+        rv = self.app.post("/")
+
+        print(rv)
         # check that handle post returns a zip file
-        testResultFile = open("response_data.zip", "w")
-        testResultFile.close()
-        result = requests.post("http://{}:{}".format("127.0.0.1", 40000), files=testResultFile)
-        self.assertIsNotNone(result)
+        #testResultFile = open("response_data.zip", "w")
+        #testResultFile.close()
+        #result = requests.post("http://{}:{}".format("127.0.0.1", 4000), files=testResultFile)
+        #self.assertIsNotNone(result)
 
 if __name__ == '__main__':
     unittest.main()

@@ -74,6 +74,12 @@ class Adapter:
     def reset_wd(self):
         os.chdir(self.initial_working_dir)
 
+    @app.route('/', methods=['GET'])
+    def get_test():
+        return "Server Is Up"
+
+
+
     # function to read the lipd files and store them in variables
     # Main Steps of Function:
     #   1. Parse metadata.JSON (finished)
