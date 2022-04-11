@@ -1,6 +1,6 @@
 required.libraries = c("httpuv","Rook", "request", "httr", 
                        "remotes", 
-                       "rjson")
+                       "rjson", "zip")
 
 for ( pkg in required.libraries ) {
   if ( !requireNamespace(pkg) ) {
@@ -61,7 +61,7 @@ fields = list(server = "ANY",
               reconstruction = "character",
               parameters = "list",
               inputs = "list",
-              output.files = "list",
+              output.files = "character",
               initial.wd = "character", 
               bin.file.types = "list"),
 
@@ -171,13 +171,18 @@ getOutputFiles = function () {
   return(output.files)
 },
 
-# TODO: Signals to adapter what files to send back in the HTTP Response message.
-#
-# Always assumes that you are appending file to list of files to send back as 
+
+# Always assumes that you are appending file to vector of files to send back as 
 # output.
-setOutputFiles = function(file.location) {
+setOutputFiles = function(location) {
   
-  # R file management magic to see if arg is valid file location
+  # Is it a file that exists?
+  if (file.exists(location) | dir.exists(location)) {
+    if (!(location %in% output.files)) {
+      new.index = length(output.files) + 1
+      output.files <<- c(output.files, location)
+    }
+  }
 },
 
 resetWd = function() {
@@ -197,38 +202,79 @@ handlePost = function(req) {
     return(parts) 
   }
   
-  # renameByMetadata and set inputd
-  # renameByMetadata(parts)
+  # parse metadata.JSON
+  json.results <- fromJSON(file = "metadata.JSON")
+  
+  
+  # set parameters
+  parameters <<- json.results$parameters
+  
+  # renameByMetadata
+  renameByMetadata(json.results$inputs)
   
   
   # run reconstruction
-  #evaluate(reconstruction)
-  
-  # resetWd
-  #resetWd()
+  eval(parse(text=reconstruction))
   
   # save output.files in a zip file
+  zip.file <- zipOutput()
   
   # return zip file string
-  zip.file <- "TODO: ZIP file creation; you Gucci"
   return(zip.file)
 },
 
-# Utility Function: saveMetadata
+# Utility Function: renameByMetadata
 #
 #
-renameByMetadata = function(env) {
+renameByMetadata = function(temp.inputs) {
   
-  # look through input stream for metadata file and save it; the name parameter 
-  # will always be "metadata" according to controller/model.py's start method
+  # Helper Function: split_path
   
-  # check if folder exists 
-  # file.exists(absolute.path)
+  # 'split_path' returns a character vector of folder names and a file name if 
+  # applicable.
+  #
+  # Will ignore a slash at the beginning of 'path'
+  split_path <- function(path) {
+    if (dirname(path) %in% c(".", path)) { 
+      return(basename(path))
+      }
+    
+    return(c(split_path(dirname(path)), basename(path)))
+  }
   
-  # 'normalizePath' returns absolute path with system-appropriate "slashes" or 
-  # directory separators
-  # exists with file.exists
+  # loop through inputs from metadata.json
+  input.names = names(temp.inputs)
   
+  for (name in input.names) {
+    
+    path.vectors = split_path(temp.inputs[[name]])
+    
+    for (vector in path.vectors) {
+      # if vector is a file in the original wd, then move it
+      if (file.exists(file.path(initial.wd, vector))) {
+        # move file
+        file.rename(from = file.path(initial.wd, vector),
+                    to = file.path(getwd(), vector))
+        
+        # TODO: if file exists at new location, delete file at old location
+        
+        inputs[[name]] <<- file.path(getwd(), vector)
+      } else {
+        # check if directory exists, create it if it does not exist
+        if (!dir.exists(vector)) {
+          dir.create(vector)
+        }
+        
+        # set working directory to 
+        setwd(file.path(getwd(), vector))
+        
+        if (vector == path.vectors[-1]) {
+          inputs[[name]] <<- g
+        }
+      }
+    }
+    resetWd()
+  }
 },
 
 # Utility Function: zipOutput
@@ -236,7 +282,13 @@ renameByMetadata = function(env) {
 # Function that creates a response_data.zip
 zipOutput = function(){
   
-  # list.files(, recursive = TRUE) if string is a directory
+  zip.name = "response_data.zip"
+  
+  zip::zip(zip.name, 
+           output.files, 
+           mode = "cherry-pick")
+  
+  return(zip.name)
 },
 
 # Utility Function: parseMultipart
@@ -467,7 +519,7 @@ parseMultipart = function(env){
   
   # Prime 'read_buffer'
   
-  # buf$read_buffer = raw(0)
+  # buf$read_buffer = the value raw(0)
   buf$read_buffer <- raw()
   
   # buf$read_buffer = first ('bufsize' or 'unread') number of bytes, 
@@ -521,8 +573,8 @@ parseMultipart = function(env){
     
     # Parsing Header Fields
     
-    # cat("Head:",rawToChar(head),"\n")
     # they're 8bit clean
+    # cat("Head:",rawToChar(head),"\n")
     
     head <- rawToChar(head)
     

@@ -9,6 +9,10 @@ def main():
 
     response = requests.post('http://localhost:4000', files=files)
 
+    print(response)
+    print(response.headers)
+    print(response.content)
+
     response_file = open('new_response_data.zip', 'wb')
     response_file.write(response.content)
     response_file.close()
