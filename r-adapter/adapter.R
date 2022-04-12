@@ -62,18 +62,14 @@ fields = list(server = "ANY",
               parameters = "list",
               inputs = "list",
               output.files = "character",
-              initial.wd = "character", 
-              bin.file.types = "list"),
+              initial.wd = "character"),
 
 methods = list(
 
 initialize = function(...) {
   server <<- NULL
   initial.wd <<- normalizePath(getwd())
-  bin.file.types <<- list(".cdf",
-                          ".lpd",
-                          ".nc")
-  
+ 
   # Need 'callSuper(...)' to initialize fields 
   callSuper(...)
 },
@@ -117,9 +113,17 @@ startServer = function() {
                      paste0("Time: ", Sys.time(), 
                             "<br>Something wrong with the handlePost function.",
                             "<br> Here is the error message thrown: ",
-                            body)  
+                            body) 
+                   headers = list('Content-Type' = 'text/html')
                  } else { 
-                   headers = list('Content-Type' = 'application/zip') 
+                   headers = list('Content-Type' = 'application/zip',
+                                  'filename' = body)
+                   
+                   body.len = file.info(body)$size
+                   
+                   con = file(body, "rb")
+                   body = readBin(con, "raw", body.len)
+                   close(con)
                  }
                }
                
@@ -650,16 +654,8 @@ parseMultipart = function(env){
             data$head <- head
             
             # Easy Access Point: CHANGE HOW THE FILE IS SAVED
-            file.ext <- paste0('.', tail(strsplit(data$filename, '[.]', perl=TRUE)[[1L]], 1))
-            
-            if (file.ext %in% bin.file.types) {
-              con <- file(data$filename, open='wb')
-              writeBin(value, con)
-            } else {
-              value <- rawToChar(value)
-              con <- file(data$filename, open='w')
-              write(value, con)
-            }
+            con <- file(data$filename, open='wb')
+            writeBin(value, con)
             close(con)
             
             params[[name]] <- data

@@ -11,9 +11,10 @@ def main():
 
     print(response)
     print(response.headers)
-    print(response.content)
 
-    response_file = open('new_response_data.zip', 'wb')
+    # have 'filename' header in Python adapter HTTP Response
+    # response_file = open(response.headers['filename'], 'wb')
+    response_file = open('response_data.zip', 'wb')
     response_file.write(response.content)
     response_file.close()
 
