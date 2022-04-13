@@ -6,8 +6,14 @@ import xarray as xr
 
 
 # preprocessing
+print("\n======== Preprocessing ========\n")
+
+config = '/PAGES2k_CCSM4_GISTEMP/configs.yml'
+recon_iterations = 1
+figure = 'graph'
+
 job = LMRt.ReconJob()
-job.load_configs(cfg_path='/PAGES2k_CCSM4_GISTEMP/configs.yml', verbose=True)
+job.load_configs(config, verbose=True)
 job.load_proxydb(verbose=True)
 job.filter_proxydb(verbose=True)
 job.seasonalize_proxydb(verbose=True)
@@ -34,40 +40,37 @@ job.seasonalize_prior(verbose=True)
 job.regrid_prior(verbose=True)
 job.save()
 
-# The above equals to below:
-# del(job.seasonalized_prior)
-# del(job.seasonalized_obs)
-# pd.to_pickle(job, os.path.join(job_dirpath, 'job.pkl'))
-
-
+print("\n======== Data Assimilation ========\n")
 # Data assimilation
-# %%time
-# job_dirpath = '...'  # set a correct directory path
-# job = pd.read_pickle(os.path.join(job_dirpath, 'job.pkl'))
-job.run(recon_seeds=np.arange(1), verbose=True)
+job.run(recon_seeds=np.arange(recon_iterations), verbose=True)
 
 
+print("\n======== Preview of results ========\n")
 # Preview of Results
 # create the res object for reconstruction results
 res = LMRt.ReconRes(job.configs['job_dirpath'], verbose=True)
 # get the varialbes from the recon_paths
 res.get_vars(['tas', 'nino3.4'], verbose=True)
-# plot the tas field
-fig, ax = res.vars['tas'].field_list[0].plot()
-fig.savefig("/figure1.png")
 
+if(figure_type == 'map'):
 
-# plot and validate the NINO3.4
-from scipy.io import loadmat
+    # plot the tas field
+    fig, ax = res.vars['tas'].field_list[0].plot()
+    fig.savefig("./map.png")
+elif(figure_type == 'graph'):
+    # plot and validate the NINO3.4
+    from scipy.io import loadmat
 
-data = loadmat('./PAGES2k_CCSM4_GISTEMP/data/obs/NINO34_BC09.mat')
-syr, eyr = 1873, 2000
-nyr = eyr-syr+1
-nino34 = np.zeros(nyr)
-for i in range(nyr):
-    nino34[i] = np.mean(data['nino34'][i*12:12+i*12])
+    data = loadmat('./data/obs/NINO34_BC09.mat')
+    syr, eyr = 1873, 2000
+    nyr = eyr-syr+1
+    nino34 = np.zeros(nyr)
+    for i in range(nyr):
+        nino34[i] = np.mean(data['nino34'][i*12:12+i*12])
 
-target_series = LMRt.Series(time=np.arange(syr, eyr+1), value=nino34, label='BC09')
+    target_series = LMRt.Series(time=np.arange(syr, eyr+1), value=nino34, label='BC09')
 
-fig, ax = res.vars['nino3.4'].validate(target_series, verbose=True).plot(xlim=[1880, 2000])
-fig.savefig("/figure2.png")
+    fig, ax = res.vars['nino3.4'].validate(target_series, verbose=True).plot(xlim=[1880, 2000])
+    fig.savefig("./graph.png")
+else:
+    print("not a valid figure parameter \n")
