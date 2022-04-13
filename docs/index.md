@@ -54,7 +54,7 @@ presto guide
 ```
 
 ### 4. Start containerizing!
-You can view our [Alpha Demo](http://localhost:4000/alpha_uc1.html) tab to see an example of containerizing LMRt.
+You can view our [LMRT Example](https://fossilizedcontainers.github.io/fossilized-controller/gathering_files.html) tab to see an example of containerizing LMRt.
 
 You can also view our other tabs if you would like to start containerizing your model from scratch, with LMRt as the guiding example.
 
