@@ -15,6 +15,8 @@ We should now have all of the necessary files to containerize LMRt. The only thi
 
 If you find you don't have time to go through these steps, or just don't want to, the completed and changed main file can be found [here](https://github.com/FossilizedContainers/fossilized-controller/blob/trunk/LMRt-example/LMRt-container/main.py) and directly downloaded [here](https://raw.githubusercontent.com/FossilizedContainers/fossilized-controller/trunk/LMRt-example/LMRt-container/main.py).
 
+**Make sure you are overriding the original main file**
+
 You can then compare this to our original file and see what was changed and added. When doing major adapter work the lines are denoted with `===Adapter work starts here===` comments.
 
 

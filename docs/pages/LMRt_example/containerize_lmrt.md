@@ -21,7 +21,7 @@ Click the following link for a guide on how to use the tool!
 https://fossilizedcontainers.github.io/fossilized-controller/
 ```
 
-### 1. Create the Dockerfile
+## 1. Create the Dockerfile
 A Dockerfile is a file that is essentially a list of instructions Docker uses to create a container. Luckily, we don't need to know much about how to create the file by hand as `presto create` does it for us! All it takes in is the language we are using and the file that holds all of our reconstruction code.
 
 ```
@@ -67,7 +67,7 @@ COPY . /
 CMD conda run --no-capture-output -n presto_container python3 main.py
 ```
 
-### 2. Build the Docker Image
+## 2. Build the Docker Image
 More information about what Docker Images are can be found
 [here](/docker.html#docker-images). Images are essentially what your container uses to run so they need to be built first.
 

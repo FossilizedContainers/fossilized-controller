@@ -11,12 +11,12 @@ LMR Turbo ([LMRt](https://github.com/fzhu2e/LMRt)) is a public example that we w
 
 The original code and data for the climate model can be found [here](https://fzhu2e.github.io/LMRt/tutorial/quickstart_low-level-workflow.html)
 
-## Setting up files
+# Setting up files
 Before we can start containerizing LMRt, we need to make sure our code is ready for containerization. To get familiar with the process we will start with an "original" main file and then make changes to use our adapter libraries.
 
 The first step is creating a new folder that is empty that will hold everything we want to put in the container. We will call it `LMRt-container`
 
-### 1. Get our data
+## 1. Get our data
 The first thing we will add to our folder is the dataset going inside the container.
 The folder with the data can be found [here](https://drive.google.com/drive/folders/1VINQ33t9T7GW8gqn9g0q9uvSNXYOlCLN). You will want to download it as a zip and then unzip it
 inside of your `LMRt-container`
@@ -31,7 +31,7 @@ emily@VM:~/.../LMRt-container$ ls
 data
 ```
 
-### 2. Setting up our environment
+## 2. Setting up our environment
 One of the benefits of containerization is that you do not need to install endless dependencies for your project. Here, you only need to list out the dependencies and our tool will figure out the rest.
 
 For this step we will want a `yml` file listing all of our dependencies. You can either download the file straight to your directory if you have `wget` capabilities or you can copy and paste the contents into a file named `presto_environment.yml`. You only need to do one of the options below.

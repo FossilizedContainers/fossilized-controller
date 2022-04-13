@@ -45,6 +45,33 @@ entries:
         url: /run_lmrt.html
         output: web
         type: frontmatter
+      - title: Cleanup
+        url: /clean_containers.html
+        output: web
+        type: frontmatter
+  - title: Containerizing a Model
+    output: web
+    folderitems:
+      - title: Set up
+        url: /setting_up.html
+        output: web
+        type: frontmatter
+      - title: Adapter Library
+        url: /adding_adapter.html
+        output: web
+        type: frontmatter
+      - title: Containerization
+        url: /containerize_model.html
+        output: web
+        type: frontmatter
+      - title: Run Model
+        url: /run_model.html
+        output: web
+        type: frontmatter
+      - title: Cleanup
+        url: /clean_containers.html
+        output: web
+        type: frontmatter
   - title: Docker
     output: web
     folderitems:
