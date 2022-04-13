@@ -9,8 +9,12 @@ summary: A quick installation guide for the Fossilized Controller
 
 ## Dependencies
 * Python3
-  - wheel
 * Pip
+  - wheel
+  - Flask
+  - requests
+  - LMRt
+  - urllib3
 * Docker
 
 Make sure you have the latest versions of each installed before using our tool.
@@ -25,31 +29,31 @@ Follow the instructions below for a quick introduction of our tool.
 We currently do not have a pip distribution so it needs to be created and installed manually. The following instructions are based on [this](https://realpython.com/python-wheels/) article.
 
 Start by cloning our tool and moving into the controller directory
-```bash
+```console
 git clone https://github.com/FossilizedContainers/fossilized-controller.git
 
 cd controller
 ```
 
 ### 2. Set up the wheel
-```bash
+```console
 python setup.py bdist_wheel
 ```
 
 #### 2.2 Check the name of the wheel
-```bash
+```console
 user@VM:~/.../controller$ ls dist/
 presto-0.0.1-py3-none-any.whl
 ```
 
 ### 3. Install the tool through pip
-```bash
+```console
 pip install dist/presto-0.0.1-py3-none-any.whl
 ```
 
 ### 3. Test the tool
 Run the following command to make sure that the tool is properly installed
-```bash
+```console
 presto guide
 ```
 
