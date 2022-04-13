@@ -18,7 +18,7 @@ You can directly download the file from [here](https://raw.githubusercontent.com
 ---
 
 Your directory should now look like below
-```bash
+```console
 emily@VM:~/.../client$ ls
 configs.yml
 ```
@@ -56,7 +56,7 @@ For the inputs, we are only sending our `config.yml` file found
 ---
 
 Your directory should now look like
-```bash
+```console
 emily@VM:~/.../client$ ls
 configs.yml  metadata.json
 ```
@@ -75,7 +75,7 @@ you run the below command to follow what is happening inside of the container in
 presto run lmrt
 ```
 
-```bash
+```console
 emily@VM:~/.../client$ presto run demo
 Running the container...
 {'Status': 'running', 'Running': True, 'Paused': False, 'Restarting': False, 'OOMKilled': False, 'Dead': False,

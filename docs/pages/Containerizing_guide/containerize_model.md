@@ -66,8 +66,8 @@ RUN conda update -n base -c defaults conda
 # setup conda environment
 COPY presto_environment.yml .
 RUN conda env create -f presto_environment.yml
-RUN echo "conda activate presto_container" >> ~/.bashrc
-SHELL ["/bin/bash", "--login", "-c"]
+RUN echo "conda activate presto_container" >> ~/.consolerc
+SHELL ["/bin/console", "--login", "-c"]
 RUN conda activate presto_container
 
 # copy all files to the root directory of the container

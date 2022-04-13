@@ -10,12 +10,12 @@ summary: A page on containerizing LMRt
 Our model should now be ready to containerize using our tool.
 
 The first thing we want to do is make sure we are in the correct folder. Make sure you are in the folder with the model and data. It should look like below.
-```bash
+```console
 emily@VM:~/.../LMRt-container$ ls
 adapter.py  data  main.py  presto_environment.yml
 ```
 The second thing we want to do is make sure that our tool is installed correctly by running the following command.
-```bash
+```console
 emily@VM:~/.../LMRt-container$ presto guide
 Click the following link for a guide on how to use the tool!
 https://fossilizedcontainers.github.io/fossilized-controller/
@@ -28,7 +28,7 @@ A Dockerfile is a file that is essentially a list of instructions Docker uses to
 presto create
 ```
 
-```bash
+```console
 emily@VM:~/.../LMRt-container$ presto create
 What is the command to run your main file?
 Here are some examples:
@@ -42,7 +42,7 @@ Dockerfile created!
 ---
 
 You should now see a Dockerfile in your directory:
-```bash
+```console
 alpha@demo:~/.../LMRt-container$ ls
 adapter.py  data  Dockerfile  main.py  presto_environment.yml
 alpha@demo:~/.../LMRt-container$
@@ -56,8 +56,8 @@ RUN conda update -n base -c defaults conda
 # setup conda environment
 COPY presto_environment.yml .
 RUN conda env create -f presto_environment.yml
-RUN echo "conda activate presto_container" >> ~/.bashrc
-SHELL ["/bin/bash", "--login", "-c"]
+RUN echo "conda activate presto_container" >> ~/.consolerc
+SHELL ["/bin/console", "--login", "-c"]
 RUN conda activate presto_container
 
 # copy all files to the root directory of the container
@@ -67,7 +67,7 @@ COPY . /
 CMD conda run --no-capture-output -n presto_container python3 main.py
 ```
 
-## 2. Build the Docker Image
+## 2. Build the Docker image
 More information about what Docker Images are can be found
 [here](/docker.html#docker-images). Images are essentially what your container uses to run so they need to be built first.
 
@@ -81,7 +81,7 @@ This process will take time to complete. On my personal machine it took 8-10 min
 presto build lmrt
 ```
 
-```bash
+```console
 emily@VM:~/.../LMRt-container$ presto build lmrt
 Building the image.... This might take a while
 ```

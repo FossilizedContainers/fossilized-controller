@@ -124,7 +124,7 @@ In order to receive files from the container, we need to set which files will be
 
 To do so, we need to use our adapter library to set them up as `output files`
 
-#### 4.2.1 Setting the Recon folder
+#### 4.2.1 Setting the recon folder
 The function that produces all of this output data is the line
 ```python
 job.run(recon_seeds=np.arange(1), verbose=True)
@@ -144,7 +144,7 @@ adapter.set_output_files(nc_path)
 # == Adapter work ends here ===
 ```
 
-#### 4.2.2 Setting the Figure
+#### 4.2.2 Setting the figure
 The second item we want returned is the figure we produce based on our `figure_type` parameter. This is in similar procedure to the recon folder where we run `set_output_files` after we save the figure. You will want to modify the `if` block as follows.
 
 ```python

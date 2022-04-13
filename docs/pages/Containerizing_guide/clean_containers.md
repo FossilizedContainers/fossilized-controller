@@ -11,7 +11,7 @@ If you have noticed your computer has slowed down, you are not alone. The contai
 
 ## 1. Display all containers
 Run `presto display` to get the name of your container:
-```bash
+```console
 emily@VM:~/.../client$ presto display
 List of containers:
 Container Name:/interesting_tereshkova       Container Image:['alpha-demo:latest']
@@ -19,14 +19,14 @@ Container Name:/interesting_tereshkova       Container Image:['alpha-demo:latest
 
 ## 2. Stop a container
 Copy the name (without the `/`) and run `presto stop`:
-```bash
+```console
 emily@VM:~/.../client$ presto stop interesting_tereshkova
 The container was successfully stopped
 ```
 
 ## 3. Delete stopped containers
 Now clean up any stopped container using `presto clean`:
-```bash
+```console
 emily@VM:~/.../client$ presto clean
 All stopped containers have been deleted!
 RESULT:
