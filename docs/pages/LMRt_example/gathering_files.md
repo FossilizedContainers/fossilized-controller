@@ -67,6 +67,8 @@ Our main file is essentially the climate model itself. It has all the code to ru
 
 The file is too large to display in the documentation but an updated version can be found at the link [here](https://raw.githubusercontent.com/FossilizedContainers/fossilized-controller/trunk/LMRt-example/main.py). You can either download it in your folder or you can use the wget command below.
 
+**If you are donwloading the file from the link above, then you can simply right click and chose `Save As` in order to save it locally to your machine. Be careful when doing this as sometimes it will want to save the file as a txt, so it would try to save it as `main.py.txt`. Keep an eye out for this, all you need to do is delete the `.txt` part and you should be fine. If this gives you errors then you can just copy and paste the contents from the link in the appropriately named file**
+
 ```bash
 wget https://raw.githubusercontent.com/FossilizedContainers/fossilized-controller/trunk/LMRt-example/main.py
 ```

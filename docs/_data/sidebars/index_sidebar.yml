@@ -37,17 +37,14 @@ entries:
         url: /modifying_main.html
         output: web
         type: frontmatter
-  - title: Alpha Demo
-    output: web
-    folderitems:
-    - title: Use Case 1
-      url: /alpha_uc1.html
-      output: web
-      type: frontmatter
-    - title: Use Case 2
-      url: /alpha_uc2.html
-      output: web
-      type: frontmatter
+      - title: Containerize LMRt
+        url: /containerize_lmrt.html
+        output: web
+        type: frontmatter
+      - title: Run LMRt
+        url: /run_lmrt.html
+        output: web
+        type: frontmatter
   - title: Docker
     output: web
     folderitems:
@@ -62,6 +59,17 @@ entries:
           url: /formatting_overview.html
           output: web
           type: frontmatter
+  - title: Alpha Demo
+    output: web
+    folderitems:
+    - title: Use Case 1
+      url: /alpha_uc1.html
+      output: web
+      type: frontmatter
+    - title: Use Case 2
+      url: /alpha_uc2.html
+      output: web
+      type: frontmatter
   - title: Documentation
     output: web
     folderitems:
