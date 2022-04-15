@@ -8,7 +8,7 @@ import xarray as xr
 # preprocessing
 print("\n======== Preprocessing ========\n")
 
-config = '/PAGES2k_CCSM4_GISTEMP/configs.yml'
+config = 'configs.yml'
 recon_iterations = 1
 figure = 'graph'
 

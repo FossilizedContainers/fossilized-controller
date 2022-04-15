@@ -113,9 +113,30 @@ There are two parameters that we are concerned with
 
 `figure_type` is a paramter we are adding to specify what figure we want output when the model finishes. The two types of figure the model works with is `graph` or `map`.
 
-TO DO:
-* Add the adapter work lines
-* Specify where we are using the parameters
+You will want to change the following lines
+```python3
+config = '/PAGES2k_CCSM4_GISTEMP/configs.yml'
+recon_iterations = 1
+figure = 'graph'
+```
+
+to
+
+```python3
+# ===Adapter work starts here===
+files = adapter.get_files()
+config = files['configs']
+parameters = adapter.get_parameters()
+print(parameters)
+
+# grabbing the specific parameter and saving it
+recon_param = parameters['recon_iterations']
+figure_type = parameters['figure_type']
+# ===Adapter work ends here===
+```
+
+`adapter.get_files()` is what allows us to grab any files we want to send into the future container.
+`adapter.get_parameters()` will let us grab the paramaters. Don't worry if you don't know *where* we are getting these from, that will be in a future step.
 
 ### 4.2 Setting output files
 In order to receive files from the container, we need to set which files will be returned from the model. For LMRt, we currently have two things that we want to return back:
