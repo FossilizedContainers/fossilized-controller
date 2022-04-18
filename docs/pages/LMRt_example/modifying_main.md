@@ -15,6 +15,8 @@ We should now have all of the necessary files to containerize LMRt. The only thi
 
 If you find you don't have time to go through these steps, or just don't want to, the completed and changed main file can be found [here](https://github.com/FossilizedContainers/fossilized-controller/blob/trunk/LMRt-example/LMRt-container/main.py) and directly downloaded [here](https://raw.githubusercontent.com/FossilizedContainers/fossilized-controller/trunk/LMRt-example/LMRt-container/main.py).
 
+**Make sure you are overriding the original main file**
+
 You can then compare this to our original file and see what was changed and added. When doing major adapter work the lines are denoted with `===Adapter work starts here===` comments.
 
 
@@ -111,8 +113,97 @@ There are two parameters that we are concerned with
 
 `figure_type` is a paramter we are adding to specify what figure we want output when the model finishes. The two types of figure the model works with is `graph` or `map`.
 
-TO DO:
-* Add the adapter work lines
-* Specify where we are using the parameters
+You will want to change the following lines
+```python3
+config = '/PAGES2k_CCSM4_GISTEMP/configs.yml'
+recon_iterations = 1
+figure = 'graph'
+```
+
+to
+
+```python3
+# ===Adapter work starts here===
+files = adapter.get_files()
+config = files['configs']
+parameters = adapter.get_parameters()
+print(parameters)
+
+# grabbing the specific parameter and saving it
+recon_param = parameters['recon_iterations']
+figure_type = parameters['figure_type']
+# ===Adapter work ends here===
+```
+
+`adapter.get_files()` is what allows us to grab any files we want to send into the future container.
+`adapter.get_parameters()` will let us grab the paramaters. Don't worry if you don't know *where* we are getting these from, that will be in a future step.
 
 ### 4.2 Setting output files
+In order to receive files from the container, we need to set which files will be returned from the model. For LMRt, we currently have two things that we want to return back:
+* Recon folder (containers NetCDF files and other output data)
+* A Figure
+
+To do so, we need to use our adapter library to set them up as `output files`
+
+#### 4.2.1 Setting the recon folder
+The function that produces all of this output data is the line
+```python
+job.run(recon_seeds=np.arange(1), verbose=True)
+```
+You can find this line directly under `print("\n======== Data Assimilation ========\n")`
+
+This produces the folder that we will want to get returned. Directly after this line you will want to use `set_output_files(path)` as shown before
+
+```python
+job.run(recon_seeds=np.arange(1), verbose=True)
+
+# Adding the produceed netcdf file
+# === Adapter work starts here ===
+# This is how we get the absolute path of the recon folder inside the container
+nc_path = os.path.abspath('recon/')
+adapter.set_output_files(nc_path)
+# == Adapter work ends here ===
+```
+
+#### 4.2.2 Setting the figure
+The second item we want returned is the figure we produce based on our `figure_type` parameter. This is in similar procedure to the recon folder where we run `set_output_files` after we save the figure. You will want to modify the `if` block as follows.
+
+```python
+if(figure_type == 'map'):
+
+        # plot the tas field
+        fig, ax = res.vars['tas'].field_list[0].plot()
+        fig.savefig("./map.png")
+
+        # Getting the absolute path of the figure and setting it
+        # === Adapter work starts here ===
+        figure_path = os.path.abspath('./map.png')
+        adapter.set_output_files(figure_path)
+        # == Adapter work ends here ===
+    elif(figure_type == 'graph'):
+        # plot and validate the NINO3.4
+        from scipy.io import loadmat
+
+        data = loadmat('./data/obs/NINO34_BC09.mat')
+        syr, eyr = 1873, 2000
+        nyr = eyr-syr+1
+        nino34 = np.zeros(nyr)
+        for i in range(nyr):
+            nino34[i] = np.mean(data['nino34'][i*12:12+i*12])
+
+        target_series = LMRt.Series(time=np.arange(syr, eyr+1), value=nino34, label='BC09')
+
+        fig, ax = res.vars['nino3.4'].validate(target_series, verbose=True).plot(xlim=[1880, 2000])
+        fig.savefig("./graph.png")
+
+        # Getting the absolute path of the figure and setting it
+        # === Adapter work starts here ===
+        figure_path = os.path.abspath('./graph.png')
+        adapter.set_output_files(figure_path)
+        # == Adapter work ends here ===
+    else:
+        print("not a valid figure parameter \n")
+```
+
+After that, the file is ready to go and you can start containerizing the model.
+## [Next](https://fossilizedcontainers.github.io/fossilized-controller/containerize_lmrt.html)

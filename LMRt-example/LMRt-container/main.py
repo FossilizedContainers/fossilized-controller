@@ -1,6 +1,3 @@
-#%load_ext autoreload
-#%autoreload 2
-
 ## These are ones you want to import for the adapter
 # import os
 import sys
@@ -42,7 +39,6 @@ def lmrt_wrapper(adapter):
     job.seasonalize_proxydb(verbose=True)
     job.load_prior(verbose=True)
     job.load_obs(verbose=True)
-    #%%time
     #job_dirpath = job.configs['job_dirpath']
     job_dirpath = parameters['job_dirpath']
     seasonalized_prior_path = os.path.join(job_dirpath, 'seasonalized_prior.pkl')
@@ -64,18 +60,9 @@ def lmrt_wrapper(adapter):
     job.regrid_prior(verbose=True)
     job.save()
 
-    # The above equals to below:
-    # del(job.seasonalized_prior)
-    # del(job.seasonalized_obs)
-    # pd.to_pickle(job, os.path.join(job_dirpath, 'job.pkl'))
-
     print("\n======== Data Assimilation ========\n")
 
     # Data assimilation
-    # %%time
-    # job_dirpath = '...'  # set a correct directory path
-    # job = pd.read_pickle(os.path.join(job_dirpath, 'job.pkl'))
-
     # Here is our param from the get_parameters() function
     job.run(recon_seeds=np.arange(recon_param), verbose=True)
 
