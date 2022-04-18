@@ -165,8 +165,6 @@ def guide():
 @cli.command()
 @click.argument('name')
 def upload(name):
-    # prompting the user for the name of the container as well as the name of the repository
-    #repository = click.prompt("What is the name of the repository you wish to upload to? (NOTE: it should have the same name as your container)")
     controller = controller_model.init_controller()
 
     try:
@@ -178,8 +176,6 @@ def upload(name):
             print("The image: {} was successfully uploaded".format(name))
     except docker.errors.APIError:
         print("ERROR: {} could not be uploaded".format(name))
-    # creating a system call to upload the image to the repository
-    #os.system('docker image push {repositoryName}'.format(repositoryName=name))
 
 
 # Function allowing the user to download a container image from a docker repository
@@ -234,6 +230,22 @@ def unpause():
         print("Container unpaused! \n")
     else:
         print("ERROR: container name not found: " + container.image)
+
+# Function to delete the image from the local docker client
+@cli.command()
+@click.argument('image')
+def delete(image):
+    # creating a controller object and container information object
+    controller = controller_model.init_controller()
+    container = (controller.get_container(image)).container
+
+    # checking that the image exists before removing it
+    if not isinstance(container.container, type(None)):
+        controller.client.images.remove(image)
+        print("The image was successfully deleted!")
+    else:
+        print("ERROR: image name not found: " + image)
+
 
 # building the package requires a main function
 def main():
