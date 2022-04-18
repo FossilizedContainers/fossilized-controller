@@ -119,6 +119,9 @@ startServer = function() {
                    headers = list('Content-Type' = 'application/zip',
                                   'filename' = body)
                    
+                   # Does 'Content-Length' give ability to send filepath string
+                   # instead of bytes?
+                   
                    body.len = file.info(body)$size
                    
                    con = file(body, "rb")

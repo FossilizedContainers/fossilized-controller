@@ -32,57 +32,6 @@ latter taking up the most space. It’s important to be aware of how many images
 and containers you have and to destroy the images and containers you no longer
 need.
 
-### Installing Docker on Linux
-
-Run the following commands in your Linux terminal to install and use Docker
-commands without sudo.
-
-```bash
-$ sudo apt-get update
-```
-
-```bash
-$ sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
-```
-
-```bash
-$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-```
-
-```bash
-$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
-```
-
-```bash
-$ sudo apt-get update
-```
-
-```bash
-$ apt-cache policy docker-ce
-```
-
-```bash
-$ sudo apt-get install docker-ce
-```
-
-Type and Enter “Y” when prompted
-
-
-```bash
-$ sudo systemctl status docker
-```
-
-“Ctrl + C” to quit
-
-
-```bash
-$ sudo usermod -aG docker {username}
-```
-```bash
-$ su - {username}
-```
-
-
 ### Docker Images
 
 To view all Docker images use the command:
