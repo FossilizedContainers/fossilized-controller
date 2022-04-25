@@ -126,7 +126,6 @@ def display():
 @cli.command()
 @click.argument('container_name')
 def stop(container_name):
-    # container_name = click.prompt("What is the name of the container you would like to stop?")
     controller = controller_model.init_controller()
 
     try:
@@ -135,12 +134,11 @@ def stop(container_name):
         print("ERROR: container name not found: " + container_name)
     else:
         container.stop()
-        print("The container was successfully stopped")
+        print("The container, {}, was successfully stopped".format(container_name))
 
 # Function to clear out the cache of containers currently on the machine
 # This function takes no parameters and does not return anything, it simply prints the
 # result of deleting the cache
-# The formatting of the results needs to be changed
 @cli.command()
 def clean():
     controller = controller_model.init_controller()
@@ -243,10 +241,10 @@ def delete(image):
     container = (controller.get_container(image)).container
 
     # checking that the image exists before removing it
-    if not isinstance(container.container, type(None)):
+    try:
         controller.client.images.remove(image)
         print("The image was successfully deleted!")
-    else:
+    except docker.errors.APIError:
         print("ERROR: image name not found: " + image)
 
 
