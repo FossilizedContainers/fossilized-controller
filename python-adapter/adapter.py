@@ -74,11 +74,13 @@ class Adapter:
     def reset_wd(self):
         os.chdir(self.initial_working_dir)
 
-    @app.route('/', methods=['GET'])
+    @app.route('/testGET', methods=['GET'])
     def get_test():
-        return "Server Is Up"
+        return "Accepting get requests"
 
-
+    @app.route('/testPOST', methods=['POST'])
+    def post_test():
+        return "Accepting post requests"
 
     # function to read the lipd files and store them in variables
     # Main Steps of Function:
