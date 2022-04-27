@@ -232,7 +232,8 @@ handlePost = function(req) {
 
 # Utility Function: renameByMetadata
 #
-#
+# Takes in the metadata.JSON's `inputs` field and saves each file in the list
+# according to the value
 renameByMetadata = function(temp.inputs) {
   
   # Helper Function: split_path
@@ -249,6 +250,8 @@ renameByMetadata = function(temp.inputs) {
     return(c(split_path(dirname(path)), basename(path)))
   }
   
+  # COMMENT IT, A BIT CONFUSING, ALSO HAPPY DAYS[[]]
+  
   # loop through inputs from metadata.json
   input.names = names(temp.inputs)
   
@@ -257,7 +260,7 @@ renameByMetadata = function(temp.inputs) {
     path.vectors = split_path(temp.inputs[[name]])
     
     for (vector in path.vectors) {
-      # if vector is a file in the original wd, then move it
+      # if vector is a file, move it to the current working directory
       if (file.exists(file.path(initial.wd, vector))) {
         # move file
         file.rename(from = file.path(initial.wd, vector),
@@ -267,17 +270,13 @@ renameByMetadata = function(temp.inputs) {
         
         inputs[[name]] <<- file.path(getwd(), vector)
       } else {
-        # check if directory exists, create it if it does not exist
+        # if vector is not a file, create a directory
         if (!dir.exists(vector)) {
           dir.create(vector)
         }
-        
-        # set working directory to 
+      
+        # set working directory to the next directory in the chain
         setwd(file.path(getwd(), vector))
-        
-        if (vector == path.vectors[-1]) {
-          inputs[[name]] <<- g
-        }
       }
     }
     resetWd()
@@ -286,7 +285,7 @@ renameByMetadata = function(temp.inputs) {
 
 # Utility Function: zipOutput
 #
-# Function that creates a response_data.zip
+# Function that creates a response_data.zip file.
 zipOutput = function(){
   
   zip.name = "response_data.zip"
@@ -302,7 +301,8 @@ zipOutput = function(){
 #
 # Borrows heavily from the parse function in the Rook's package /R/utils.R file. 
 # This function parses and saves a file or files in a POST request's form data 
-# in the current working directory.
+# in the current working directory. It returns a named list of each file in the 
+# POST payload where the named fields are the POST header fields.
 #
 # NOTE:
 #   * EASY ACCESS POINT to: CHANGE HOW THE FILE IS SAVED

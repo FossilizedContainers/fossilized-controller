@@ -3,9 +3,16 @@ import requests
 
 def main():
     # Actual client is in the /controller/model.py
-    files = {"metadata": open("metadata.json", 'r'),
-             "weldeab": open("lipd-files/GeoB9307_3.Weldeab.2014.lpd", 'rb'),
-             "net_cdf": open("nc-files/WMI_Lear.nc", 'rb')}
+
+    # For Temp12k-RC
+    files = {"metadata": open("../temp12k-rc-example/metadata.json", 'r'),
+             "params": open("../temp12k-rc-example/params.json", 'rb')}
+
+
+    # For LMRt
+    # files = {"metadata": open("metadata.json", 'r'),
+    #          "weldeab": open("lipd-files/GeoB9307_3.Weldeab.2014.lpd", 'rb'),
+    #          "net_cdf": open("nc-files/WMI_Lear.nc", 'rb')}
 
     response = requests.post('http://localhost:4000', files=files)
 
