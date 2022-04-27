@@ -30,9 +30,6 @@ Here are some examples:
 
 RUN conda update -n base -c defaults conda
 
-# installing r-essentials package
-RUN conda install -c r r-essentials
-
 # setup conda environment
 COPY presto_environment.yml .
 RUN conda env create -f presto_environment.yml
