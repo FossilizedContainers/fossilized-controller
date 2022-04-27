@@ -1,0 +1,7 @@
+{
+    "parameters": {
+    },
+    "inputs": {
+        "params": "params.json"
+    }
+}
