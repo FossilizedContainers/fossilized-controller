@@ -8,9 +8,6 @@ dependencies:
   - pip=21.2.4
   - python=3.9.7
   - r-httpuv
-  - r-rook
-  - r-request
-  - r-httr
   - r-remotes
   - r-rjson
   - r-zip
