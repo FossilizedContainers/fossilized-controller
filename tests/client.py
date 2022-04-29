@@ -14,7 +14,7 @@ def main():
     #          "weldeab": open("lipd-files/GeoB9307_3.Weldeab.2014.lpd", 'rb'),
     #          "net_cdf": open("nc-files/WMI_Lear.nc", 'rb')}
 
-    response = requests.post('http://localhost:4000', files=files)
+    response = requests.post('http://127.0.0.1:4000', files=files)
 
     print(response)
     print(response.headers)

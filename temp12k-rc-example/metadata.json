@@ -1,5 +1,6 @@
 {
     "parameters": {
+      "figtype": "complex"
     },
     "inputs": {
         "params": "params.json"
