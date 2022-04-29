@@ -101,8 +101,8 @@ startServer = function() {
 
   if (is.null(server)) {
     server <<- httpuv::runServer(host="0.0.0.0",
-                                   port=4000,
-                                   list(call= function(req) {
+                                  port=4000,
+                                  list(call= function(req) {
                body = "Blank"
                headers = list('Content-Type' = 'text/html')
 
