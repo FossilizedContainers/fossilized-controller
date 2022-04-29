@@ -1,3 +1,7 @@
+remotes::install_github("nickmckay/lipdr")
+remotes::install_github("nickmckay/geochronr")
+remotes::install_github("nickmckay/compositer")
+
 library(lipdR) # to read and interact with LiPD data
 library(geoChronR) # for plotting mostly, remotes::install_github("nickmckay/geoChronR")
 library(magrittr) # we'll be using the magrittr pipe ( %>% ) for simplicity
@@ -10,7 +14,7 @@ library(jsonlite) # to read in parameters
 library(purrr)
 library(readr)
 
-source("r-adapter/adapter.R")
+source("adapter.R")
 
 temp12k_rc_wrapper = function(adapter) {
 

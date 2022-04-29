@@ -1,0 +1,22 @@
+# Test environment for the bogus models
+name: presto_container
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - r-base=4.1
+  - pip=21.2.4
+  - python=3.9.7
+  - r-remotes
+  - r-magrittr
+  - r-dplyr
+  - r-ggplot2
+  - r-foreach
+  - r-doparallel
+  - r-jsonlite
+  - r-purrr
+  - r-readr
+  - pip:
+    - requests==2.27.1
+    - urllib3==1.26.8
+    - Flask
