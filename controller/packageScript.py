@@ -20,7 +20,7 @@ def create():
     print("""What is the command to run your main file?
 Here are some examples:
 - python3 main.py
-- r main.R
+- Rscript main.R
 - sh main.sh
 """)
 
