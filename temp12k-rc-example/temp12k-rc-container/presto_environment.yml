@@ -7,7 +7,13 @@ dependencies:
   - r-base=4.1
   - pip=21.2.4
   - python=3.9.7
+  - r-httpuv
+  - r-rook
+  - r-request
+  - r-httr
   - r-remotes
+  - r-rjson
+  - r-zip
   - r-magrittr
   - r-dplyr
   - r-ggplot2
@@ -16,7 +22,3 @@ dependencies:
   - r-jsonlite
   - r-purrr
   - r-readr
-  - pip:
-    - requests==2.27.1
-    - urllib3==1.26.8
-    - Flask
