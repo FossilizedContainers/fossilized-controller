@@ -13,10 +13,10 @@ RUN conda activate presto_container
 COPY . /
 
 # Downloed GitHub packages
-RUN apt-get -y update && apt-get -y upgrade
+# RUN apt-get -y update && apt-get -y upgrade
 # RUN conda run --no-capture-output -n presto_container R -e "remotes::install_github('nickmckay/lipdr')"
 #RUN conda run --no-capture-output -n presto_container R -e "remotes::install_github('nickmckay/geochronr')"
 #RUN conda run --no-capture-output -n presto_container R -e "remotes::install_github('nickmckay/compositer')"
 
 # run the command in the context of the environment we made
-# CMD conda run --no-capture-output -n presto_container Rscript main.R
+CMD conda run --no-capture-output -n presto_container Rscript main.R
