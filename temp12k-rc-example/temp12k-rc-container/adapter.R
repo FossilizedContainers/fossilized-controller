@@ -8,12 +8,6 @@ for ( pkg in required.libraries ) {
   }
 }
 
-# install lipdR library using remotes package
-# remotes::install_github("nickmckay/LiPD-Utilities", subdir = "R", quiet = TRUE)
-
-# load in lipdR package
-# library("lipdR")
-
 # load in httpuv and rjson package
 library("httpuv")
 library("rjson")
