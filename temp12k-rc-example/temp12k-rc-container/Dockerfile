@@ -1,7 +1,5 @@
 FROM rocker/tidyverse
 
-#RUN conda update -n base -c defaults conda
-
 # Copy all files to the root directory of the container
 COPY . /
 

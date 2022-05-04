@@ -26,7 +26,31 @@ Here are some examples:
 
     run_command = click.prompt("> ")
 
-    file_contents = """FROM continuumio/anaconda3
+    if run_command.find("Rscript") != 1 or run_command.find(" R ") != -1:
+        file_contents = """FROM rocker/tidyverse
+# Copy all files to the root directory of the container
+COPY . /
+
+# Download GitHub packages and their dependencies
+RUN apt-get -y update
+RUN apt-get -y install libcurl4-gnutls-dev libxml2-dev libssl-dev \
+libudunits2-dev libgdal-dev gdal-bin libproj-dev \
+proj-data proj-bin libgeos-dev libfontconfig1-dev \
+libglpk-dev
+
+RUN R -e 'install.packages(c("usethis", "devtools", "sf", "leaflet", "raster", \
+"leafem", "pracma", "igraph", "egg", "httpuv", \
+"rjson", "Rook"))'
+
+RUN R -e 'devtools::install_github("neotomadb/neotoma2")'
+RUN R -e 'remotes::install_github("nickmckay/lipdr")'
+RUN R -e 'remotes::install_github("nickmckay/compositer")'
+RUN R -e 'remotes::install_github("nickmckay/geochronr")'
+
+SHELL ["/bin/bash", "--login", "-c"]
+CMD {run_command}""".format(run_command=run_command)
+    else:
+        file_contents = """FROM continuumio/anaconda3
 
 RUN conda update -n base -c defaults conda
 
@@ -229,21 +253,46 @@ def unpause():
     else:
         print("ERROR: container name not found: " + container.image)
 
-# Function to delete the image from the local docker client
 @cli.command()
 @click.argument('image')
 def delete(image):
+    '''
+    This command removes the given Docker Image. It then prunes the Docker Images to remove any lingering, intermediary
+    Docker Images.
+
+
+    :param image: The Docker Image to be deleted. To get a list of Docker Images please run `presto images`
+
+    :return: A message that shows the space freed or an error
+    '''
+
     # creating a controller object and container information object
     controller = controller_model.init_controller()
-    container = (controller.get_container(image)).container
 
     # checking that the image exists before removing it
     try:
         controller.client.images.remove(image)
+        controller.client.images.prune()
         print("The image was successfully deleted!")
     except docker.errors.APIError:
         print("ERROR: image name not found: " + image)
 
+# Function to display all of the container images that exist
+# This function takes no parameters and does not return a value
+# This does not properly display containers right now
+@cli.command()
+def images():
+    '''
+
+    :return:
+    '''
+
+    controller = controller_model.init_controller()
+    print("List of containers: ")
+    # the containers are in a list
+    for container in controller.client.containers.list():
+        print('Container Name:{}       Container Image:{}'.format(container.attrs['Name'],
+                                                                  container.image.tags))
 
 # building the package requires a main function
 def main():
