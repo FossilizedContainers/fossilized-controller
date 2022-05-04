@@ -23,4 +23,4 @@ RUN R -e 'remotes::install_github("nickmckay/geochronr")'
 SHELL ["/bin/bash", "--login", "-c"]
 
 # run the command in the context of the environment we made
-# CMD Rscript main.R
+CMD Rscript main.R
