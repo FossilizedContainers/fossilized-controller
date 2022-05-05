@@ -7,19 +7,19 @@ permalink: index.html
 summary: A quick installation guide for the Fossilized Controller
 ---
 
-## Dependencies
-* Python3
+*This was tested on a Mint Linux distribution and Windows WSL 2.*
+
+## Download Dependencies
+
+### Download the latest versions of the following software:
+* Python 3
 * Pip
   - wheel
   - Flask
   - requests
   - LMRt
   - urllib3
-* Docker
-
-Make sure you have the latest versions of each installed before using our tool.
-
-This was tested on a Mint Linux distribution.
+* [Docker](/docker_install.html)
 
 ## Installing the Fossilized Controller
 
@@ -51,13 +51,13 @@ presto-0.0.1-py3-none-any.whl
 pip install dist/presto-0.0.1-py3-none-any.whl
 ```
 
-### 3. Test the tool
+### 4. Test the tool
 Run the following command to make sure that the tool is properly installed
 ```console
 presto guide
 ```
 
-### 4. Start containerizing!
+### 5. Start containerizing!
 You can view our [LMRT Example](https://fossilizedcontainers.github.io/fossilized-controller/gathering_files.html) tab to see an example of containerizing LMRt.
 
 You can also view our other tabs if you would like to start containerizing your model from scratch, with LMRt as the guiding example.

@@ -26,6 +26,7 @@ entries:
       url: /index.html
       output: web
       type: homepage
+
   - title: Containerizing LMRt
     output: web
     folderitems:
@@ -33,7 +34,7 @@ entries:
         url: /gathering_files.html
         output: web
         type: frontmatter
-      - title: Setting up the model
+      - title: Setting Up the Model
         url: /modifying_main.html
         output: web
         type: frontmatter
@@ -49,14 +50,39 @@ entries:
         url: /clean_containers.html
         output: web
         type: frontmatter
-  - title: Containerizing a Model
+
+  - title: Containerizing Temp12k Regional Composites
     output: web
     folderitems:
-      - title: Set up
+      - title: Getting Started
+        url: /gathering_files_temp12k.html
+        output: web
+        type: frontmatter
+      - title: Setting Up the Model
+        url: /modifying_main_temp12k.html
+        output: web
+        type: frontmatter
+      - title: Containerize LMRt
+        url: /containerize_temp12k.html
+        output: web
+        type: frontmatter
+      - title: Run LMRt
+        url: /run_temp12k.html
+        output: web
+        type: frontmatter
+      - title: Cleanup
+        url: /r_clean_containers.html
+        output: web
+        type: frontmatter
+
+  - title: Containerizing a Python Model
+    output: web
+    folderitems:
+      - title: Setting Up Your Model
         url: /setting_up.html
         output: web
         type: frontmatter
-      - title: Adapter Library
+      - title: Addding Adapter Library
         url: /adding_adapter.html
         output: web
         type: frontmatter
@@ -69,9 +95,34 @@ entries:
         output: web
         type: frontmatter
       - title: Cleanup
-        url: /clean_containers.html
+        surl: /clean_containers.html
         output: web
         type: frontmatter
+
+  - title: Containerizing a R Model
+    output: web
+    folderitems:
+      - title: Setting Up Your Model
+        url: /r_setting_up.html
+        output: web
+        type: frontmatter
+      - title: Adding Adapter Library
+        url: /r_adding_adapter.html
+        output: web
+        type: frontmatter
+      - title: Containerization
+        url: /r_containerize_model.html
+        output: web
+        type: frontmatter
+      - title: Run Model
+        url: /r_run_model.html
+        output: web
+        type: frontmatter
+      - title: Cleanup
+        url: /r_clean_containers.html
+        output: web
+        type: frontmatter
+
   - title: Docker
     output: web
     folderitems:
@@ -79,6 +130,11 @@ entries:
       url: /docker.html
       output: web
       type: frontmatter
+    - title: Installing Docker
+      url: /docker_install.html
+      output: web
+      type: frontmatter
+
   - title: Formatting Code
     output: web
     folderitems:

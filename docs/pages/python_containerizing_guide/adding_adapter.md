@@ -1,11 +1,13 @@
 ---
-title: "Adding adapter library"
+title: "Adding Python Adapter Library"
 keywords: guide
 tags: [guide]
 sidebar: index_sidebar
 permalink: adding_adapter.html
-summary: Modifying our main file using our adapter library
+summary: Modifying our main file using our Python adapter library
 ---
+
+# For Python Models
 
 **The instructions below are tailored for the Python adapter**
 ## 1. Imports
@@ -20,7 +22,7 @@ You do not need to install the lipd package yourself, this will happen inside th
 ## 2. Register model
 Everything after the imports is code relating to the model that we need to wrap around a function. The reason for this is because we need a structure to register into our adapter libraries. This is what allows us to communicate with the container with our CLI. I will use some example code from [LMRt](https://fossilizedcontainers.github.io/fossilized-controller/gathering_files.html) to demonstrate how to wrap and register your code. The snippets you see are not functional code. Any `...` that you see means there is code between the lines, it is just hidden for demonstration purposes.
 
-Example code
+Example code formatting:
 ```python
 import adapter
 # import the rest of the libraries as well, I excluded them to save space.
@@ -81,6 +83,23 @@ adapter.register(code_wrapper)
 adapter.start_server()
 ```
 
+
+## 3. Getting parameters
+
+For the following steps I will use the following metadata file as an example:
+```json
+{
+    "parameters": {
+      "figtype": "complex"
+    },
+    "inputs": {
+        "params": "params.json"
+    }
+}
+```
+
+**If you already have a function that will read a configuration file you do not need to do this step, you can move on to Step 3 and follow the instructions there**
+
 For the following steps I will use the following metadata file as an example
 ```json
 {
@@ -94,8 +113,6 @@ For the following steps I will use the following metadata file as an example
 }
 ```
 
-## 3. Getting parameters
-**If you already have a function that will read a a configuration file you do not need to do this step, you can move on to Step 3 and follow the instructions there**
 ```python
 adapter.get_parameters()
 ```
@@ -188,5 +205,6 @@ adapter.register(code_wrapper)
 adapter.start_server()
 ```
 
-Once you have made the changes explained above, you are now ready to start containerizing your model. 
-## [Next](https://fossilizedcontainers.github.io/fossilized-controller/containerize_model.html)
+Once you have made the changes explained above, you are now ready to start
+containerizing your model.
+[Next](https://fossilizedcontainers.github.io/fossilized-controller/containerize_model.html)

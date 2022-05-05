@@ -1,5 +1,5 @@
 ---
-title: "Setting up your model"
+title: "Setting Up Your Model"
 keywords: guide
 tags: [guide]
 sidebar: index_sidebar
@@ -13,7 +13,7 @@ When you are containerizing your model, there are two important folders you will
 * The folder holding everything you want in the container
 * A folder with your inputs to communicate with the container
 
-Both aspects will be explained further in depth, but it is important that these are two seperate folders. A file structure before starting your containerization is as follows
+Both aspects will be explained further in depth, but it is important that these are two separate folders. A file structure before starting your containerization is as follows
 
 ```
 Reconstruction
@@ -29,18 +29,17 @@ This folder will hold everything that your final reconstruction model container 
 **If you have a file that holds all of your configuration, I would highly suggest you keep that in the `client` folder instead of inside your containerization folder. Justification can be found [here](https://fossilizedcontainers.github.io/fossilized-controller/setting_up.html#31-input-files)**
 
 ### 2.1 Adapter library
-The first file you want is the adapter library. This is so you can import it and use the helper functions. You can find the updated raw files below for your respective language:
+The first file you want is the adapter library. This is so you can import it and use the helper functions. You can find the updated raw files below for Python:
 * [Python 3](https://raw.githubusercontent.com/FossilizedContainers/fossilized-controller/trunk/python-adapter/adapter.py)
-* [R](https://raw.githubusercontent.com/FossilizedContainers/fossilized-controller/trunk/r-adapter/adapter.R)
 
 **Note**
 Sometimes when you save a file from this type of link, it will try to add an extra `.txt` extension to it. So it would try to download a file named `main.py` as `main.py.txt`. You can easily bypass this by removing the `.txt` extension from the file name before you save it. That, or you can copy the contents into a new file of the same name.
 
 ### 2.2 Main code
-Make sure you have your *main* climate code file in this folder, as well as any other supporting scripts or files. Keep note of which file is meant to be the main execution file.
+Make sure you have your *main* climate code file in the container folder, as well as any other supporting scripts or files. Keep note of which file is meant to be the main execution file.
 
 ### 2.3 Data
-Make sure that your data is uncompressed here as well. These are often times too big for places like Github repositories so don't forget to make sure they are here.
+Make sure that your data is uncompressed here as well. These are often times too big for places like GitHub repositories so don't forget to make sure they are here.
 
 ### 2.4 Environment file
 This is a file that our tool will use to set up all necessary libraries and dependencies. It is in the form of a YAML file such as the one below. If you are creating one from scratch you need the template from [2.4.3](https://fossilizedcontainers.github.io/fossilized-controller/setting_up.html#243-template-file). Our tool has its own dependencies once inside the container!

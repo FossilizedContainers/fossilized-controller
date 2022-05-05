@@ -8,7 +8,7 @@ permalink: docker_install.html
 summary: How to install Docker.
 ---
 
-### Installing Docker on Linux
+## Installing Docker on Linux
 
 Run the following commands in your Linux terminal to install and use Docker
 commands without sudo.
@@ -58,16 +58,28 @@ $ sudo usermod -aG docker {username}
 $ su - {username}
 ```
 
-### Installing Docker on Windows
+## Installing Docker on Windows with Windows Subsystem for Linux, or WSL 2, Integration
 
-1. https://docs.docker.com/desktop/windows/wsl/
+### Definitive guide to downloading Docker on Windows with WSL Integration
 
-2. Resources -> WSL Integration
+*Follow the guide linked to install Docker Desktop and upgrade WSL 1 to WSL 2:*
+
+[https://docs.docker.com/desktop/windows/wsl/](https://docs.docker.com/desktop/windows/wsl/)
+
+### A General Outline to Install Docker Desktop with WSL Integration:
+
+*Please follow the guide above. The sequence below details the general steps needed.*
+
+1. Download Docker Desktop for Windows
+
+2. Open Docker Desktop -> Settings -> Resources -> WSL Integration
 
 3. Check WSL version with:
 ```console
 wsl.exe -l -v
 ```
+You will want to have WSL 2 downloaded.
 
-4. Update WSL 1 to WSL 2: https://docs.microsoft.com/en-us/windows/wsl/install.
-It may take a while.
+4. Update WSL 1 to WSL 2 with the link below. It may take a while.
+
+    [https://docs.microsoft.com/en-us/windows/wsl/install](https://docs.microsoft.com/en-us/windows/wsl/install)
