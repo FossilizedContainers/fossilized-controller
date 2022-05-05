@@ -26,7 +26,7 @@ Here are some examples:
 
     run_command = click.prompt("> ")
 
-    if run_command.find("Rscript") != 1 or run_command.find(" R ") != -1:
+    if 'R' in run_command or "Rscript" in run_command:
         file_contents = """FROM rocker/tidyverse
 # Copy all files to the root directory of the container
 COPY . /
