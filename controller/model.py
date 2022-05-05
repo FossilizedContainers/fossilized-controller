@@ -20,7 +20,7 @@ class ContainerInfo:
 
     def start(self, controller, run_metadata_file: str):
         #checks if the container already exists before running it
-        self.container = controller.client.containers.run(self.image, detach=True, network="host")
+        self.container = controller.client.containers.run(self.image, detach=True, ports= {'4000/tcp': ('127.0.0.1', 4000)})
         self.container.reload()
         # get the randomly assigned port
         #self.container_port = list(self.container.ports.values())[0][0]['HostPort']
